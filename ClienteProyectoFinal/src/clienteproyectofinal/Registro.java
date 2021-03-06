@@ -163,9 +163,10 @@ public class Registro extends javax.swing.JFrame {
                 
                 
             Util util = new Util();
-        if(pswPassword.toString().equals(pswConfPassword.toString())){
             
-        }
+            if(pswPassword.toString().equals(pswConfPassword.toString())){
+            
+            }
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
