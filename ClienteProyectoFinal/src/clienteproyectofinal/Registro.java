@@ -5,12 +5,25 @@
  */
 package clienteproyectofinal;
 
+import clases.Util;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author disen
  */
 public class Registro extends javax.swing.JFrame {
-
+    ObjectOutputStream oos;
+    ObjectInputStream ois;
     /**
      * Creates new form Registro
      */
@@ -130,8 +143,38 @@ public class Registro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        Registro r=new Registro();
-        r.show();
+       
+        
+        
+        try {
+            
+            KeyPairGenerator KeyGen;
+            KeyGen = KeyPairGenerator.getInstance("RSA");
+            
+            KeyGen.initialize(1024);
+            KeyPair par = KeyGen.generateKeyPair();
+            PrivateKey clavepriv = par.getPrivate();
+            PublicKey clavepubl = par.getPublic();
+               
+            PublicKey publicServer = null;
+                
+            publicServer = (PublicKey) ois.readObject();//Recibimos la clavePublica del otro extremo
+            oos.writeObject(clavepubl);//Le mandamos nuestra clave publica 
+                
+                
+            Util util = new Util();
+        if(pswPassword.toString().equals(pswConfPassword.toString())){
+            
+        }
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     /**
