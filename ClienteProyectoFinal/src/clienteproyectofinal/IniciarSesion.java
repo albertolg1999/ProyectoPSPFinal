@@ -5,17 +5,47 @@
  */
 package clienteproyectofinal;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author disen
  */
 public class IniciarSesion extends javax.swing.JFrame {
 
+    
+    private Socket servidor;
+    private DataInputStream dis;
+    private DataOutputStream dos;
+    private ObjectOutputStream oos;
     /**
      * Creates new form IniciarSesion
      */
     public IniciarSesion() {
-        initComponents();
+        try {
+            initComponents();
+            setLocationRelativeTo(null);
+            InetAddress dir = InetAddress.getLocalHost();
+            this.servidor = new Socket(dir, 9000);
+            this.dis = new DataInputStream(servidor.getInputStream());
+            this.dos = new DataOutputStream(servidor.getOutputStream());
+            this.oos = new ObjectOutputStream(servidor.getOutputStream());
+            //generaClaves();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(IniciarSesion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(IniciarSesion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(IniciarSesion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
