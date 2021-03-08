@@ -6,6 +6,7 @@
 package servidorproyectofinalpsp;
 
 import clases.Seguridad;
+import hilos.HiloCliente;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -29,13 +30,13 @@ public class ServidorProyectoFinalPSP {
         PrivateKey clavePrivPropia = (PrivateKey) claves[0];
         PublicKey clavePubPropia = (PublicKey) claves[1];
         
-        Socket cliente = servidor.accept();
         
-        /*while(true){
+        
+        while(true){
             Socket cliente = servidor.accept();
-            HiloInicialCliente hc = new HiloInicialCliente(cliente, clavePubPropia, clavePrivPropia);
+            HiloCliente hc = new HiloCliente(cliente, clavePubPropia, clavePrivPropia);
             hc.start();
-        }*/
+        }
     }
     
 }
