@@ -18,6 +18,7 @@ public class Usuario implements Serializable{
     private String pwd;
     private boolean activado;
     private String rol;
+    private int id;
 
     public Usuario( String name, String email, String pwd, boolean activado, String rol) {
         this.name = name;
@@ -39,7 +40,7 @@ public class Usuario implements Serializable{
     public Usuario(String name, String email, String pwdR) {
         this.name = name;
         this.email = email;
-        this.pwd = pwdR;
+        this.pwd = pwd;
     }
 
     public String getRol() {
@@ -49,6 +50,16 @@ public class Usuario implements Serializable{
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
     
     public Usuario(String email, String pwd) {
         this.email = email;

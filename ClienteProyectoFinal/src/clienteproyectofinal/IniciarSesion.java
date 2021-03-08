@@ -5,8 +5,10 @@
  */
 package clienteproyectofinal;
 
+import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.Seguridad;
+import clases.Usuario;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,12 +17,17 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -201,10 +208,135 @@ public class IniciarSesion extends javax.swing.JFrame {
         r.show();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    private String resumirPwd() throws NoSuchAlgorithmException {
+        char[] pass = pswPassword.getPassword();
+        String passStr = new String(pass);
+        return new String(Seguridad.resumirPwd(passStr));
+    }
+
+    private void initPreferences(Usuario user) {
+        //PreferencesView prf = new PreferencesView(true, user, servidor, clavePrivPropia, clavePubAjena);
+        //prf.setVisible(true);
+        this.dispose();
+    }
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
-        // TODO add your handling code here:
+       if (!txtUsuario.getText().isEmpty() && pswPassword.getPassword().length != 0) {
+
+            try {
+                //envio de modo LOGIN al hilo que escucha en el servidor
+                enviarRespuesta(CodigosUso.LOGIN);
+                
+                System.out.println("Escuchando login");
+                //Creamos al usuario con el constructor del login, lo ciframos y lo enviamos
+                String pwd = resumirPwd();
+                Usuario u = new Usuario(txtUsuario.getText(), pwd);
+                so = Seguridad.cifrar(clavePubAjena, u);
+                Comunicacion.enviarObjeto(servidor, so);
+                System.out.println("Usuario enviado " + u.getEmail());
+
+                //recibimos la respuesta en base al resultado de nuestra petición
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short res = (short) Seguridad.descifrar(clavePrivPropia, so);
+                System.out.println("Rspuesta Servidor " + res);
+
+                switchUser(res);
+
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+                    | IOException | IllegalBlockSizeException | ClassNotFoundException | BadPaddingException ex) {
+            }
+
+        } else {
+            if (txtUsuario.getText().isEmpty()) {
+                //lblError_User.setVisible(true);
+            } else {
+                //lblError_Pwd.setVisible(true);
+            }
+        }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
+    
+    /**
+     * 
+     * @param res 
+     */
+    private void switchUser(short res) {
+        try {
+            switch (res) {
+
+                case CodigosUso.CODE_USER_EXISTS:
+                    System.out.println("Usuario inicio sesion correctamente");
+                    //Recibo usuario existente en la tabla usuario
+                    so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                    
+                    Usuario user = (Usuario) Seguridad.descifrar(clavePrivPropia, so);
+
+                    //recibimos si el usuario esta activado, tiene preferencias y
+                    //el rol que tiene en la tabla roles_users
+                    so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                    short code = (short) Seguridad.descifrar(clavePrivPropia, so);
+                    
+                    initSwitchUserData(code, user);
+                    break;
+
+                case CodigosUso.EMAIL_LOGIN_INCORRECTO:
+                    System.out.println("Este email no existe o usuario ");
+                    //lblError_User.setText("Este email no existe");
+                    //lblError_User.setVisible(true);
+                    break;
+
+                case CodigosUso.PWD_LOGIN_INCORRECTO:
+                    System.out.println("La contraseña no coincide con el email insertado");
+                    //lblError_Pwd.setText("La contraseña no coincide con el email insertado");
+                    //lblError_Pwd.setVisible(true);
+                    break;
+                
+            }
+        } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException
+                | InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
+    /**
+     *
+     * @param res
+     */
+    private void enviarRespuesta(short res) {
+        try {
+            so = Seguridad.cifrar(clavePubAjena, res);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+        }
+    }
+    
+    
+     /**
+     * 
+     * @param code
+     * @param userLog 
+     */
+    private void initSwitchUserData(short code, Usuario userLog) {
+
+        switch (code) {
+            case CodigosUso.CODE_USER_NOT_ACTIVATED:
+                JOptionPane.showMessageDialog(null, "Usuario no activado espera a que lo haga un Admin");
+                break;
+
+            case CodigosUso.PREFERENCES:
+                //initPreferences(userLog);
+                break;
+
+            case CodigosUso.CODE_USER_USER:
+                
+                //iniciamos menu principal en modo usuario
+                //initMainView(false);
+                break;
+
+            case CodigosUso.CODE_USER_ADMIN:
+                //iniciamos menu principal en modo admin
+                //initMainView(true);
+                break;
+        }
+    }
     /**
      * @param args the command line arguments
      */
