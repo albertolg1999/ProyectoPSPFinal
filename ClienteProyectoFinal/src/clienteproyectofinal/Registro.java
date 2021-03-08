@@ -8,6 +8,7 @@ package clienteproyectofinal;
 import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.Seguridad;
+import clases.Usuario;
 import clases.Util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -199,11 +200,11 @@ public class Registro extends javax.swing.JFrame {
                 SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.SIGN_UP);
                 Comunicacion.enviarObjeto(servidor, so);
                 
-                //crearUsuario(name, email);
+                crearUsuario(name, email);
                 
                 //recibo el codigo de respuesta del servidor
                 so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-                int res = (int) Seguridad.descifrar(clavePrivPropia, so);
+                short res = (short) Seguridad.descifrar(clavePrivPropia, so);
 
                 switch (res) {
 
@@ -240,6 +241,25 @@ public class Registro extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    
+    private void crearUsuario(String name, String email) {
+        try {
+            
+            String pwdR = resumirPwd();
+            //Creamos el usuario a registrar en la base de datos
+            Usuario user = new Usuario( name, email, pwdR);
+            so = Seguridad.cifrar(this.clavePubAjena, user);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private String resumirPwd() throws NoSuchAlgorithmException {
+        char[] pass = pswPassword.getPassword();
+        String passStr = new String(pass);
+        return new String(Seguridad.resumirPwd(passStr));
+    }
     /**
      * @param args the command line arguments
      */
