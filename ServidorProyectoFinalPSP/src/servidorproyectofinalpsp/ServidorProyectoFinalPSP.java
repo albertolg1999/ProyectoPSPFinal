@@ -5,6 +5,14 @@
  */
 package servidorproyectofinalpsp;
 
+import clases.Seguridad;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 /**
  *
  * @author disen
@@ -14,8 +22,20 @@ public class ServidorProyectoFinalPSP {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+        ServerSocket servidor;
+        servidor = new ServerSocket(5000);
+        Object[] claves = Seguridad.generarClaves();
+        PrivateKey clavePrivPropia = (PrivateKey) claves[0];
+        PublicKey clavePubPropia = (PublicKey) claves[1];
+        
+        Socket cliente = servidor.accept();
+        
+        /*while(true){
+            Socket cliente = servidor.accept();
+            HiloInicialCliente hc = new HiloInicialCliente(cliente, clavePubPropia, clavePrivPropia);
+            hc.start();
+        }*/
     }
     
 }
