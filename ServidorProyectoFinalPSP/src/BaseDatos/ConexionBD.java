@@ -73,19 +73,35 @@ public class ConexionBD {
         boolean exito = false;
 
         if (!usuarioExists(u.getEmail())) {
-            System.out.println(u.getPwd().toString());
-            sentencia = "INSERT INTO " + ConstantesBD.TUsuarios + " ( Usuario, Email, Password) "
+            sentencia = "INSERT INTO " + ConstantesBD.TUsuarios + " ( Usuario, Email, Password,Activado) "
                     + "values('" + u.getName() + "','" + u.getEmail()
-                    + "','" + u.getPwd() + "')";
+                    + "','" + u.getPwd() + "',"+0+")";
             
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 System.out.println("USUARIO REGISTRADO");
+                
                 exito = true;
             }
+        }
+        
+        
+        if(exito){
+            int id=obtenerIdUsuario(u);
+            if (id!=0) {
+            System.out.println(u.getPwd().toString());
+            sentencia = "INSERT INTO " + ConstantesBD.TPerfil + " ( id_usuario, usuario) "
+                    + "values('" + id +  "','" + u.getName()+ "')";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                System.out.println("USUARIO REGISTRADO en la tabla perfil");
+            }
+        }
         }
         return exito;
     }
 
+    
+    
     
     /**
      *
@@ -188,6 +204,33 @@ public class ConexionBD {
         return u;
 
     }
+    
+    /**
+     *
+     * @param email
+     * @param pwd
+     * @return
+     */
+    public synchronized static int obtenerIdUsuario(Usuario u) {
+
+        int id=0;
+        sentencia = "SELECT id_usuario FROM " + ConstantesBD.TUsuarios + " WHERE ( usuario LIKE '"+u.getName()+ "' ) and password LIKE '" + u.getPwd() + "'";
+
+        try {
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                
+                id=Conj_Registros.getInt("id_usuario");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return id;
+
+    }
+
 
     /**
      *

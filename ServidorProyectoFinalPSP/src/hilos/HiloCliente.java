@@ -69,6 +69,7 @@ public class HiloCliente extends Thread {
                     case CodigosUso.SIGN_UP:
                         System.out.println("ORDEN REGISTRO");
                         if (registrarUsuario()) {
+                            
                             enviarRespuesta(CodigosUso.CODE_SIGNUP_CORRECTO);
                         } else {
                             enviarRespuesta(CodigosUso.CODE_SIGNUP_EMAIL);
@@ -142,7 +143,7 @@ public class HiloCliente extends Thread {
      */
     private boolean registrarUsuario() throws IOException, ClassNotFoundException, SQLException {
         Usuario u = recibirUsuario();
-        System.out.println("RECIBIDO USUARIO OK " + u.getEmail());
+        System.out.println("RECIBIDO USUARIO OK " + u.getEmail()+" "+u.getPwd());
         return ConexionBD.registrarUsuario(u);
     }
 
@@ -192,9 +193,13 @@ public class HiloCliente extends Thread {
                 //Enviamos el codigo de que el usuario existe en la base de datos
                 enviarRespuesta(CodigosUso.CODE_USER_EXISTS);
 
+                int id=ConexionBD.obtenerIdUsuario(userLogueado);
+                
+                userLogueado.setId(id);
                 //Enviamos el usuario que se acaba de logear con todos los datos
                 //que existen en la tabla usuario
                 so = Seguridad.cifrar(clavePubAjena, userLogueado);
+                System.out.println("Usuario Logueado"+userLogueado.getName()+" id:"+userLogueado.getId());
                 Comunicacion.enviarObjeto(cliente, so);
 
                 checkStateUser();
