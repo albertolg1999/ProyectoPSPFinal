@@ -175,7 +175,7 @@ public class ConexionBD {
 
             while (Conj_Registros.next()) {
                 u = new Usuario();
-                u.setId(Conj_Registros.getInt("id"));
+                u.setId(Conj_Registros.getInt("id_usuario"));
                 u.setName(Conj_Registros.getString("usuario"));
                 u.setEmail(Conj_Registros.getString("email"));
                 u.setPwd(Conj_Registros.getString("password"));
@@ -196,16 +196,17 @@ public class ConexionBD {
      */
     public synchronized static boolean isActivatedUser(Usuario u) {
         boolean activado = false;
-        sentencia = "SELECT activado FROM " + ConstantesBD.TUsuarios + " where id = '" + u.getId() + "'";
+        sentencia = "SELECT activado FROM " + ConstantesBD.TUsuarios + " where id_usuario = '" + u.getId() + "'";
 
         try {
+            System.out.println( u.getId());
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
 
             while (Conj_Registros.next()) {
                 int act;
                 act = Conj_Registros.getInt(1);
-                
                 if(act==0){
+                    
                     activado=false;
                 }
                 else{
@@ -215,6 +216,8 @@ public class ConexionBD {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        
+        
         return activado;
     }
 

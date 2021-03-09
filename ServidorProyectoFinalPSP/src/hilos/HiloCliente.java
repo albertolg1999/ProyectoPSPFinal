@@ -203,6 +203,7 @@ public class HiloCliente extends Thread {
      */
     private void checkStateUser() {
         if (ConexionBD.isActivatedUser(userLogueado)) {
+            enviarRespuesta(CodigosUso.LOGIN_CORRECTO);
             //checkPrefsUser();
         } else {
             enviarRespuesta(CodigosUso.CODE_USER_NOT_ACTIVATED);
