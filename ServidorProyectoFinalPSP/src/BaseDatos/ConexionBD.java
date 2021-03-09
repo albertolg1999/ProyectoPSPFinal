@@ -8,12 +8,14 @@ package BaseDatos;
 import clases.ConstantesBD;
 import clases.Usuario;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,14 +27,20 @@ public class ConexionBD {
     private static ResultSet Conj_Registros;
     private static String sentencia;
 
+    public ConexionBD() {
+    }
+
+    
+    
+    
     static {
         try {
             try {
                 String controlador = "com.mysql.jdbc.Driver";
                 Class.forName(controlador);
                 String URL_BD = "jdbc:mysql://localhost/" + ConstantesBD.BD;
-                conex = (Connection) java.sql.DriverManager.getConnection(URL_BD, ConstantesBD.USUARIO, ConstantesBD.PASSWD);
-                Sentencia_SQL = (Statement) conex.createStatement();
+                conex = (com.mysql.jdbc.Connection) java.sql.DriverManager.getConnection(URL_BD, ConstantesBD.USUARIO, ConstantesBD.PASSWD);
+                Sentencia_SQL = (com.mysql.jdbc.Statement) conex.createStatement();
                 System.out.println("Conexión realizada con éxito");
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
@@ -41,7 +49,35 @@ public class ConexionBD {
             e.printStackTrace();
         }
     }
+    
 
+    public static Connection abrirConexion() {
+        try {
+            try {
+                String controlador = "com.mysql.jdbc.Driver";
+                Class.forName(controlador);
+                String URL_BD = "jdbc:mysql://localhost/" + ConstantesBD.BD;
+                conex = (com.mysql.jdbc.Connection) java.sql.DriverManager.getConnection(URL_BD, ConstantesBD.USUARIO, ConstantesBD.PASSWD);
+                Sentencia_SQL = (com.mysql.jdbc.Statement) conex.createStatement();
+                System.out.println("Conexión realizada con éxito");
+            } catch (ClassNotFoundException | SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void cerrarConexion(Connection conex) {
+        try {
+            conex.close();
+            conex = null;
+            System.out.println("Desconectado de la Base de Datos"); // Opcional para seguridad
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error de Desconexion", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     /**
      *
      * @param email
@@ -63,6 +99,53 @@ public class ConexionBD {
         return exist;
     }
 
+    public static boolean activarUser(int id) {
+        boolean exito = false;
+        
+
+        
+        try{
+            
+            sentencia = "UPDATE " + ConstantesBD.TUsuarios + " SET activado = true WHERE id = '" + id + "'";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                exito = true;
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return exito;
+    }
+    
+    public static boolean deleteUser(int id) throws SQLException {
+        boolean exito = false;
+       
+                System.out.println(id);
+        
+            sentencia = "DELETE FROM " + ConstantesBD.TUsuarios_Roles + " WHERE id_usuario = " + id + "";
+
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+                    
+                    sentencia = "DELETE FROM " + ConstantesBD.TPerfil + " WHERE id_usuario = " + id + "";
+
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+                    
+                    sentencia = "DELETE FROM " + ConstantesBD.TUsuarios + " WHERE id_usuario = " + id + "";
+
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+        
+           
+        
+        return exito;
+    }
+    
     /**
      *
      * @param u
@@ -95,6 +178,14 @@ public class ConexionBD {
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 System.out.println("USUARIO REGISTRADO en la tabla perfil");
             }
+            
+            sentencia = "INSERT INTO " + ConstantesBD.TUsuarios_Roles + " ( id_usuario, id_rol) "
+                    + "values('" + id +  "',2)";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                System.out.println("USUARIO REGISTRADO en la tabla usuarios roles");
+            }
+            
         }
         }
         return exito;
@@ -274,6 +365,7 @@ public class ConexionBD {
             while (Conj_Registros.next()) {
                 Usuario u = new Usuario();
                 
+                u.setId(Conj_Registros.getInt("id_usuario"));
                 u.setName(Conj_Registros.getString("usuario"));
                 u.setEmail(Conj_Registros.getString("email"));
                 int act=Conj_Registros.getInt("activado");
@@ -303,10 +395,10 @@ public class ConexionBD {
      * @param id
      * @return
      */
-   /* private static String selectIdRol(String id) {
+    private static String selectIdRol(int id) {
         String idRol = "";
         try {
-            sentencia = "SELECT idRol FROM " + ConstantesBD.TABLAROLES_USERS + " WHERE idUser LIKE '" + id + "'";
+            sentencia = "SELECT id_rol FROM " + ConstantesBD.TUsuarios_Roles + " WHERE id_usuario LIKE '" + id + "'";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
                 idRol = Conj_Registros.getString(1);
@@ -323,13 +415,13 @@ public class ConexionBD {
      * @param idUser
      * @return
      */
-    /*public synchronized static String selectTypeUser(String idUser) {
+    public synchronized static String selectTypeUser(int idUser) {
 
         String tipoUser = "";
         String idRol = selectIdRol(idUser);
 
         try {
-            sentencia = "SELECT name FROM " + ConstantesBD.TABLAROLES + " WHERE id = '" + idRol + "'";
+            sentencia = "SELECT roll FROM " + ConstantesBD.TRoles + " WHERE id_rol = '" + idRol + "'";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
                 tipoUser = Conj_Registros.getString(1);
@@ -340,16 +432,16 @@ public class ConexionBD {
         return tipoUser;
     }
     
-    public synchronized static ArrayList<Usuario> obtenerUsuarios(String id){
+   /* public synchronized static ArrayList<Usuario> obtenerUsuarios(String id){
         
         ArrayList<Usuario> listaUsers = null;
         
         try {
-            sentencia = "SELECT * FROM " + ConstantesBD.TABLAUSUARIOS + " WHERE id != '" + id + "'";
+            sentencia = "SELECT * FROM " + ConstantesBD.TUsuarios + " WHERE id != '" + id + "'";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
                 Usuario u = new Usuario();
-                u.setId(Conj_Registros.getString("id"));
+                u.setId(Conj_Registros.getInt("id"));
                 u.setName(Conj_Registros.getString("nombre"));
                 u.setEmail(Conj_Registros.getString("email"));
                 u.setPwd(Conj_Registros.getString("password"));

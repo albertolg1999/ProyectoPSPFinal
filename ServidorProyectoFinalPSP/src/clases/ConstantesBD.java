@@ -14,8 +14,8 @@ public class ConstantesBD {
     public static final String USUARIO = "root";
     public static final String PASSWD = "";
     public static final String TUsuarios = "usuarios";
-    public static final String TABLAROLES = "roles";
-    public static final String TABLAROLES_USERS = "roles_users";
+    public static final String TRoles = "roles";
+    public static final String TUsuarios_Roles = "usuarios_roles";
     public static final String TABLAPREFES = "preferencia";
     public static final String TPerfil = "perfil";
     public static final String TABLARELACION = "relacion";
