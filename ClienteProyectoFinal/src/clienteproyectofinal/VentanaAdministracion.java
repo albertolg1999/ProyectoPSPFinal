@@ -138,7 +138,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         for (int x = 0; x < res.size(); x++) {
                 Usuario u=(Usuario)res.get(x);
                 //System.out.println(u.getName()+" "+u.isActivado());
-                tablalist.addRow(new Object[]{u.getName(),u.getEmail(),u.isActivado(),null});
+                tablalist.addRow(new Object[]{u.getName(),u.getEmail(),u.isActivado()});
                 
                             
 
