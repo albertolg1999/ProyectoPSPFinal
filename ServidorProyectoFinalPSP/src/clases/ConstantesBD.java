@@ -16,7 +16,7 @@ public class ConstantesBD {
     public static final String TUsuarios = "usuarios";
     public static final String TRoles = "roles";
     public static final String TUsuarios_Roles = "usuarios_roles";
-    public static final String TABLAPREFES = "preferencia";
+    public static final String TPref = "preferencias";
     public static final String TPerfil = "perfil";
     public static final String TABLARELACION = "relacion";
     public static final String TABLARELA_PREFES = "relacion_preferencias";

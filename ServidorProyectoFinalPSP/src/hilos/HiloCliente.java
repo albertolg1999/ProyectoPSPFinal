@@ -12,6 +12,7 @@ import BaseDatos.UsuariosBD;
 import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.ConstantesRoles;
+import clases.Preferencias;
 import clases.Seguridad;
 import clases.Usuario;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class HiloCliente extends Thread {
     private PrivateKey clavePrivPropia;
     private SealedObject so;
     private Usuario userLogueado;
-    //private Preferences prefsUserLog;
+    private Preferencias prefsUserLog;
     private boolean activo;
     ConexionBD cb;
 
@@ -89,6 +90,16 @@ public class HiloCliente extends Thread {
                     case CodigosUso.LOGIN:
                         System.out.println("ORDEN LOGIN");
                         login();
+                        break;
+                    case CodigosUso.C_Preferencias:
+                        System.out.println("ORDEN CONSULTAR PREFERENCIAS SI EXISTEN");
+                        Preferencias p;
+                        Usuario u=recibirUsuario();
+                        p=ConexionBD.obtenerPreferencias(u.getId());
+                        
+                        if(p==null){
+                            enviarRespuesta(CodigosUso.C_Preferencias_notiene);
+                        }
                         break;
 
                     //crear preferences
@@ -281,7 +292,7 @@ public class HiloCliente extends Thread {
      * @param pwd
      * @return
      */
-    private boolean existsLogin(String email, String pwd) {
+    private boolean ComprobarLoginExiste(String email, String pwd) {
         boolean existe = false;
         userLogueado = ConexionBD.comprobarLogin(email, pwd);
 
@@ -298,7 +309,7 @@ public class HiloCliente extends Thread {
         //recibe el usuario a loguear
         Usuario u = recibirUsuario();
         System.out.println(u.getEmail());
-        if (existsLogin(u.getEmail(), u.getPwd())) {
+        if (ComprobarLoginExiste(u.getEmail(), u.getPwd())) {
             try {
                 //Enviamos el codigo de que el usuario existe en la base de datos
                 enviarRespuesta(CodigosUso.CODE_USER_EXISTS);
@@ -310,8 +321,8 @@ public class HiloCliente extends Thread {
                 so = Seguridad.cifrar(clavePubAjena, userLogueado);
                 System.out.println("Usuario Logueado"+userLogueado.getName()+" id:"+userLogueado.getId());
                 Comunicacion.enviarObjeto(cliente, so);
-
-                checkStateUser();
+                System.out.println("h");
+                ComprobarTipoUsuario();
 
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
                 ex.printStackTrace();
@@ -325,10 +336,11 @@ public class HiloCliente extends Thread {
     /**
      *
      */
-    private void checkStateUser() {
+    private void ComprobarUsuarioActivado() {
         if (ConexionBD.isActivatedUser(userLogueado)) {
+            System.out.println("hh");
             //enviarRespuesta(CodigosUso.LOGIN_CORRECTO);
-            checkTypeUser();
+            ComprobarTipoUsuario();
             //checkPrefsUser();
         } else {
             enviarRespuesta(CodigosUso.CODE_USER_NOT_ACTIVATED);
@@ -338,25 +350,28 @@ public class HiloCliente extends Thread {
     /**
      *
      */
-    /*private void checkPrefsUser() {
-        prefsUserLog = ConexionBD.obtenerPreferences(userLogueado.getId());
+    private void ComprobarPreferenciasUsuario() {
+        prefsUserLog = ConexionBD.obtenerPreferencias(userLogueado.getId());
         if (prefsUserLog != null) {
-            checkTypeUser();
+            
+            
         } else {
-            enviarRespuesta(CodeResponse.PREFERENCES);
+            System.out.println("hhh");
+            enviarRespuesta(CodigosUso.C_Preferencias_notiene);
         }
     }
 
     /**
      *
      */
-    private void checkTypeUser() {
+    private void ComprobarTipoUsuario() {
         String rol = ConexionBD.selectTypeUser(userLogueado.getId());
 
         System.out.println(rol);
         switch (rol) {
             case ConstantesRoles.ROL_USER:
                 enviarRespuesta(CodigosUso.CODE_USER_USER);
+                ComprobarPreferenciasUsuario();
                 break;
 
             case ConstantesRoles.ROL_ADMIN:

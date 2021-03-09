@@ -6,6 +6,7 @@
 package BaseDatos;
 
 import clases.ConstantesBD;
+import clases.Preferencias;
 import clases.Usuario;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -239,22 +240,35 @@ public class ConexionBD {
      * @param idUser
      * @return
      */
-    /*public synchronized static Preferences obtenerPreferences(String idUser) {
-        Preferences prefs = null;
-        sentencia = "SELECT * FROM " + ConstantesBD.TABLAPREFES + " WHERE idUser like '" + idUser + "'";
+    public synchronized static Preferencias obtenerPreferencias(int id) {
+        Preferencias prefs = null;
+        sentencia = "SELECT * FROM " + ConstantesBD.TPref + " WHERE id_usuario = " + id + "";
 
         try {
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
 
             while (Conj_Registros.next()) {
-                prefs = new Preferences();
-                prefs.setIdUser(Conj_Registros.getString("idUser"));
+                prefs = new Preferencias();
+                prefs.setId(Conj_Registros.getInt("id_usuario"));
                 prefs.setArte(Conj_Registros.getInt("arte"));
                 prefs.setDeporte(Conj_Registros.getInt("deporte"));
                 prefs.setPolitica(Conj_Registros.getInt("politica"));
-                prefs.settHijos(Conj_Registros.getBoolean("thijos"));
-                prefs.setqHijos(Conj_Registros.getBoolean("qhijos"));
-                prefs.setRelacion(Conj_Registros.getString("tiporelacion"));
+                if(Conj_Registros.getInt("thijos")==1){
+                    prefs.settHijos(true);
+                }
+                else{
+                   prefs.settHijos(false); 
+                }
+                
+                if(Conj_Registros.getInt("qhijos")==1){
+                    prefs.setqHijos(true);
+                }
+                else{
+                   prefs.setqHijos(false); 
+                }
+                
+                
+                prefs.setRelacion(Conj_Registros.getString("relaccion"));
                 prefs.setInteres(Conj_Registros.getString("interes"));
                 
             }
@@ -378,8 +392,9 @@ public class ConexionBD {
                 }
                 u.setActivado(activ);
                 System.out.println(u.getName());
-                /*String rol = selectTypeUser(u.getId());
-                u.setRol(rol);*/
+                //String rol = selectTypeUser(u.getId());
+                //u.setRol(rol);
+                //System.out.println(u.getRol());
                 listaUsers.add(u);
             }
         } catch (SQLException ex) {
@@ -395,13 +410,14 @@ public class ConexionBD {
      * @param id
      * @return
      */
-    private static String selectIdRol(int id) {
-        String idRol = "";
+    private static int selectIdRol(int id) {
+        int idRol =0 ;
         try {
-            sentencia = "SELECT id_rol FROM " + ConstantesBD.TUsuarios_Roles + " WHERE id_usuario LIKE '" + id + "'";
+            sentencia = "SELECT id_rol FROM " + ConstantesBD.TUsuarios_Roles + " WHERE id_usuario =" + id + "";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
-                idRol = Conj_Registros.getString(1);
+                idRol = Conj_Registros.getInt("id_rol");
+                System.out.println(idRol);
             }
 
         } catch (SQLException ex) {
@@ -415,16 +431,17 @@ public class ConexionBD {
      * @param idUser
      * @return
      */
-    public synchronized static String selectTypeUser(int idUser) {
+    public synchronized static String selectTypeUser(int idUsuario) {
 
         String tipoUser = "";
-        String idRol = selectIdRol(idUser);
+        int idRol = selectIdRol(idUsuario);
 
         try {
-            sentencia = "SELECT roll FROM " + ConstantesBD.TRoles + " WHERE id_rol = '" + idRol + "'";
+            sentencia = "SELECT roll FROM " + ConstantesBD.TRoles + " WHERE id_rol = " + idRol + "";
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
             while (Conj_Registros.next()) {
-                tipoUser = Conj_Registros.getString(1);
+                tipoUser = Conj_Registros.getString("roll");
+                System.out.println(tipoUser);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
