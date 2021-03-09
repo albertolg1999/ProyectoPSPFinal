@@ -33,4 +33,6 @@ public class CodigosUso {
     
     public static final short CODE_USER_USER = 14;
     public static final short CODE_USER_ADMIN = 15;
+    
+    public static final short C_obtenerUsuarios = 21;
 }

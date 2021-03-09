@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -94,6 +95,15 @@ public class HiloCliente extends Thread {
                     //seleccionar preferences user
                     case CodigosUso.CODE_PREFERENCES_SELECT:
                         //cargarPreferencias();
+                        break;
+                    
+                    case CodigosUso.C_obtenerUsuarios:
+                        
+                        ArrayList<Usuario> lista;
+                        lista=ConexionBD.obtenerUsuarios();
+                        
+                        so = Seguridad.cifrar(clavePubAjena, lista);
+                        Comunicacion.enviarObjeto(cliente, so);
                         break;
                     
                     case CodigosUso.CODE_USER_ADMIN:

@@ -220,6 +220,40 @@ public class ConexionBD {
         
         return activado;
     }
+    
+    public synchronized static ArrayList<Usuario> obtenerUsuarios(){
+        
+        ArrayList<Usuario> listaUsers =new ArrayList<Usuario>();
+        
+        try {
+            sentencia = "SELECT * FROM " + ConstantesBD.TUsuarios +"";
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+            while (Conj_Registros.next()) {
+                Usuario u = new Usuario();
+                
+                u.setName(Conj_Registros.getString("usuario"));
+                u.setEmail(Conj_Registros.getString("email"));
+                int act=Conj_Registros.getInt("activado");
+                boolean activ;
+                if(act==0){
+                    activ=false;
+                }
+                else{
+                    activ=true;
+                }
+                u.setActivado(activ);
+                System.out.println(u.getName());
+                /*String rol = selectTypeUser(u.getId());
+                u.setRol(rol);*/
+                listaUsers.add(u);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+        return listaUsers;
+        
+    }
 
     /**
      *
