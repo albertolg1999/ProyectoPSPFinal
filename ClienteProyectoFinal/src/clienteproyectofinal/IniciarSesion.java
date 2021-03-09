@@ -277,7 +277,7 @@ public class IniciarSesion extends javax.swing.JFrame {
                     //el rol que tiene en la tabla roles_users
                     so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                     short code = (short) Seguridad.descifrar(clavePrivPropia, so);
-                    
+                    System.out.println(code);
                     initSwitchUserData(code, user);
                     break;
 
@@ -319,6 +319,7 @@ public class IniciarSesion extends javax.swing.JFrame {
      */
     private void initSwitchUserData(short code, Usuario userLog) {
 
+        System.out.println("d "+code );
         switch (code) {
             case CodigosUso.CODE_USER_NOT_ACTIVATED:
                 JOptionPane.showMessageDialog(null, "Usuario no activado espera a que lo haga un Admin");
@@ -336,12 +337,12 @@ public class IniciarSesion extends javax.swing.JFrame {
             case CodigosUso.CODE_USER_USER:
                 
                 //iniciamos menu principal en modo usuario
-                //initMainView(false);
+                IniciarVentanaPrincipal(true);
                 break;
 
             case CodigosUso.CODE_USER_ADMIN:
                 //iniciamos menu principal en modo admin
-                
+                IniciarVentanaPrincipal(true);
                 //initMainView(true);
                 break;
         }

@@ -10,6 +10,8 @@ package clases;
  * @author disen
  */
 public class CodigosUso {
+     public static final short ERROR = -1;   
+    
     public static final short LOGIN_CORRECTO = 2;    
     public static final short EMAIL_LOGIN_INCORRECTO = 3;
     public static final short PWD_LOGIN_INCORRECTO = 4;
@@ -33,6 +35,17 @@ public class CodigosUso {
     
     public static final short CODE_USER_USER = 14;
     public static final short CODE_USER_ADMIN = 15;
+    
+    //ADMIN
+    public static final short CODE_ELIMINAR_USER = 19;
+    public static final short CODE_CREAR_USER = 20;
+    public static final short CODE_ACTIVAR_USER = 28;
+    public static final short CODE_CREAR_ADMIN = 22;
+    public static final short CODE_ELIMINAR_ADMIN = 23;
+    public static final short CODE_EXITO_ACTIVAR = 24;
+    public static final short CODE_EXITO_ELIMINAR = 25;
+    public static final short CODE_EXITO_ASC = 26;
+    public static final short CODE_EXITO_DESC = 27;
     
     public static final short C_obtenerUsuarios = 21;
 }

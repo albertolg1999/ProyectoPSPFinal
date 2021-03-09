@@ -5,8 +5,23 @@
  */
 package clienteproyectofinal;
 
+import clases.CodigosUso;
+import clases.Comunicacion;
+import clases.Seguridad;
 import clases.Usuario;
+import java.io.IOException;
+import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,12 +31,21 @@ import javax.swing.table.DefaultTableModel;
 public class VentanaAdministracion extends javax.swing.JFrame {
     ArrayList<Usuario> res;
     DefaultTableModel tablalist;
+    
+    private Socket servidor;
+    private PrivateKey clavePrivPropia;
+    private PublicKey clavePubAjena;
+    
+    private SealedObject so;
     /**
      * Creates new form VentanaAdministracion
      */
-    public VentanaAdministracion(ArrayList<Usuario> res) {
+    public VentanaAdministracion(ArrayList<Usuario> res, Socket servidor, PrivateKey priv, PublicKey pubAjena) {
         initComponents();
         this.res=res;
+        this.servidor = servidor;
+        this.clavePrivPropia = priv;
+        this.clavePubAjena = pubAjena;
         cargarTablaUsuarios(res);
     }
 
@@ -84,10 +108,20 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         btnActivar.setText("Activar");
         btnActivar.setToolTipText("Añadir Usuario");
         btnActivar.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnActivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActivarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.setToolTipText("Añadir Usuario");
         btnEliminar.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnAscender.setText("Ascender");
         btnAscender.setToolTipText("Añadir Usuario");
@@ -164,6 +198,80 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarActionPerformed
+        try {
+            enviarRespuesta(CodigosUso.CODE_ACTIVAR_USER);
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            ArrayList<Usuario> res = (ArrayList<Usuario>) Seguridad.descifrar(clavePrivPropia, so);
+            VentanaAdministracion pa=new VentanaAdministracion(res,servidor,clavePrivPropia,clavePubAjena);
+            pa.show();
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnActivarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        try {
+            enviarRespuesta(CodigosUso.CODE_ELIMINAR_USER);
+            
+            Usuario us=new Usuario();
+            int row=tabla.getSelectedRow();
+            
+            us=res.get(row);
+            System.out.println(us.getName());
+            so = Seguridad.cifrar(clavePubAjena, us);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+            System.out.println(orden);
+            
+            if(orden!=0){
+                System.out.println("Eliminado");
+            }
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    
+    
+    private void enviarRespuesta(short res) {
+        try {
+            so = Seguridad.cifrar(clavePubAjena, res);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+        }
+    }
+    
     private void cargarTablaUsuarios( ArrayList<Usuario> res){
         tablalist=new DefaultTableModel();
         tablalist.addColumn("Usuario");
