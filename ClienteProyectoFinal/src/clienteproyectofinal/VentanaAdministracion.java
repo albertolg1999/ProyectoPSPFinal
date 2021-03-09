@@ -5,17 +5,28 @@
  */
 package clienteproyectofinal;
 
+import clases.Usuario;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author disen
  */
 public class VentanaAdministracion extends javax.swing.JFrame {
-
+    ArrayList<Usuario> res;
+    DefaultTableModel tablalist;
     /**
      * Creates new form VentanaAdministracion
      */
-    public VentanaAdministracion() {
+    public VentanaAdministracion(ArrayList<Usuario> res) {
         initComponents();
+        this.res=res;
+        cargarTablaUsuarios(res);
+    }
+
+    private VentanaAdministracion() {
+        
     }
 
     /**
@@ -29,33 +40,31 @@ public class VentanaAdministracion extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabla = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnAñadir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Usuario", "Email", "Activo", "Rol"
+                "Usuario", "Email"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, false, false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabla);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setText("Administradores");
@@ -120,6 +129,24 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cargarTablaUsuarios( ArrayList<Usuario> res){
+        tablalist=new DefaultTableModel();
+        tablalist.addColumn("Usuario");
+        tablalist.addColumn("Email");
+        tablalist.addColumn("Activado");
+        tablalist.addColumn("Rol");
+        for (int x = 0; x < res.size(); x++) {
+                Usuario u=(Usuario)res.get(x);
+                //System.out.println(u.getName()+" "+u.isActivado());
+                tablalist.addRow(new Object[]{u.getName(),u.getEmail(),u.isActivado(),null});
+                
+                            
+
+        }
+        
+        tabla.setModel(tablalist);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -161,6 +188,6 @@ public class VentanaAdministracion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 }

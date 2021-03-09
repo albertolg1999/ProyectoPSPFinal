@@ -6,10 +6,24 @@
 package clienteproyectofinal;
 
 import RSMaterialComponent.RSTableMetroCustom;
+import clases.CodigosUso;
+import clases.Comunicacion;
+import clases.Seguridad;
+import clases.Usuario;
 import java.awt.CardLayout;
+import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
 
 /**
  *
@@ -18,11 +32,11 @@ import java.security.PublicKey;
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     private boolean rolAdmin;
-    private RSTableMetroCustom tbUsers;
-    private CardLayout cLayout;
     private Socket servidor;
     private PrivateKey clavePrivPropia;
     private PublicKey clavePubAjena;
+    
+    private SealedObject so;
     /**
      * Creates new form VentanaPrincipal
      */
@@ -166,14 +180,45 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnAdministrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdministrarActionPerformed
-        VentanaAdministracion pa=new VentanaAdministracion();
-        pa.show();
+        
+        
+        try {
+            enviarRespuesta(CodigosUso.C_obtenerUsuarios);
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            ArrayList<Usuario> res = (ArrayList<Usuario>) Seguridad.descifrar(clavePrivPropia, so);
+            VentanaAdministracion pa=new VentanaAdministracion(res);
+            pa.show();
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
     }//GEN-LAST:event_btnAdministrarActionPerformed
 
     private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPerfilActionPerformed
 
+    
+    private void enviarRespuesta(short res) {
+        try {
+            so = Seguridad.cifrar(clavePubAjena, res);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+        }
+    }
     /**
      * @param args the command line arguments
      */
