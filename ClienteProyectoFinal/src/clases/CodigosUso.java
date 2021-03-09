@@ -48,4 +48,7 @@ public class CodigosUso {
     public static final short CODE_EXITO_DESC = 27;
     
     public static final short C_obtenerUsuarios = 21;
+    public static final short C_Preferencias = 29;
+    public static final short C_Preferencias_notiene = 30;
+    public static final short C_Preferencias_tiene = 31;
 }

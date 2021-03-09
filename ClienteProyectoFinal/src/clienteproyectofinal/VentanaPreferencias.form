@@ -101,7 +101,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="rbSerio" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="rbtSi" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="rbqSi1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="rbqSi" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" attributes="0">
@@ -112,9 +112,9 @@
                           </Group>
                           <EmptySpace pref="39" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="rbEsporadica1" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbEsporadica" min="-2" max="-2" attributes="0"/>
                               <Component id="rbtNo" min="-2" max="-2" attributes="0"/>
-                              <Component id="rbqNo1" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbqNo" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                       </Group>
@@ -143,7 +143,7 @@
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="rbEsporadica1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="rbEsporadica" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="rbSerio" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -155,8 +155,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="rbqNo1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="rbqSi1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="rbqNo" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="rbqSi" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -207,7 +207,7 @@
             <Property name="text" type="java.lang.String" value="Tipo de relacci&#xf3;n que desea:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="rbEsporadica1">
+        <Component class="javax.swing.JRadioButton" name="rbEsporadica">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="ff" red="33" type="rgb"/>
@@ -279,7 +279,7 @@
             <Property name="text" type="java.lang.String" value="&#xbf;Quiere hijos?:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="rbqSi1">
+        <Component class="javax.swing.JRadioButton" name="rbqSi">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="ff" red="33" type="rgb"/>
@@ -293,7 +293,7 @@
             <Property name="text" type="java.lang.String" value="Si"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="rbqNo1">
+        <Component class="javax.swing.JRadioButton" name="rbqNo">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="ff" red="33" type="rgb"/>
@@ -404,6 +404,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Guardar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -5,18 +5,25 @@
  */
 package clienteproyectofinal;
 
+import clases.Preferencias;
+import clases.Usuario;
+
 /**
  *
  * @author disen
  */
 public class VentanaPreferencias extends javax.swing.JFrame {
-
+    Usuario u;
     /**
      * Creates new form VentanaPreferencias
      */
     public VentanaPreferencias() {
         initComponents();
         
+    }
+
+    VentanaPreferencias(Usuario userLog) {
+        this.u=userLog;
     }
 
     /**
@@ -34,14 +41,14 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        rbEsporadica1 = new javax.swing.JRadioButton();
+        rbEsporadica = new javax.swing.JRadioButton();
         rbSerio = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         rbtSi = new javax.swing.JRadioButton();
         rbtNo = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
-        rbqSi1 = new javax.swing.JRadioButton();
-        rbqNo1 = new javax.swing.JRadioButton();
+        rbqSi = new javax.swing.JRadioButton();
+        rbqNo = new javax.swing.JRadioButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
@@ -66,10 +73,10 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Tipo de relacción que desea:");
 
-        rbEsporadica1.setBackground(new java.awt.Color(51, 255, 204));
-        grupoRelaccion.add(rbEsporadica1);
-        rbEsporadica1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        rbEsporadica1.setText("Esporádica");
+        rbEsporadica.setBackground(new java.awt.Color(51, 255, 204));
+        grupoRelaccion.add(rbEsporadica);
+        rbEsporadica.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        rbEsporadica.setText("Esporádica");
 
         rbSerio.setBackground(new java.awt.Color(51, 255, 204));
         grupoRelaccion.add(rbSerio);
@@ -92,15 +99,15 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("¿Quiere hijos?:");
 
-        rbqSi1.setBackground(new java.awt.Color(51, 255, 204));
-        grupoqhijos.add(rbqSi1);
-        rbqSi1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        rbqSi1.setText("Si");
+        rbqSi.setBackground(new java.awt.Color(51, 255, 204));
+        grupoqhijos.add(rbqSi);
+        rbqSi.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        rbqSi.setText("Si");
 
-        rbqNo1.setBackground(new java.awt.Color(51, 255, 204));
-        grupoqhijos.add(rbqNo1);
-        rbqNo1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        rbqNo1.setText("No");
+        rbqNo.setBackground(new java.awt.Color(51, 255, 204));
+        grupoqhijos.add(rbqNo);
+        rbqNo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        rbqNo.setText("No");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel5.setText("Gustos");
@@ -147,6 +154,11 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         cmbInteres.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hombre", "Mujer", "Ambos" }));
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -191,16 +203,16 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(rbSerio)
                                     .addComponent(rbtSi)
-                                    .addComponent(rbqSi1)))
+                                    .addComponent(rbqSi)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(cmbInteres, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rbEsporadica1)
+                            .addComponent(rbEsporadica)
                             .addComponent(rbtNo)
-                            .addComponent(rbqNo1))
+                            .addComponent(rbqNo))
                         .addGap(45, 45, 45))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,7 +232,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(rbEsporadica1)
+                    .addComponent(rbEsporadica)
                     .addComponent(rbSerio))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -230,8 +242,8 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(rbqNo1)
-                    .addComponent(rbqSi1))
+                    .addComponent(rbqNo)
+                    .addComponent(rbqSi))
                 .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -284,6 +296,39 @@ public class VentanaPreferencias extends javax.swing.JFrame {
     private void jSlider3StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider3StateChanged
         lPolitica.setText(""+jSlider3.getValue());
     }//GEN-LAST:event_jSlider3StateChanged
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        Preferencias p=new Preferencias();
+        
+        p.setId(this.u.getId());
+        if(rbSerio.isSelected()){
+            p.setRelacion("Seria");
+        }
+        else if(rbEsporadica.isSelected()){
+            p.setRelacion("Esporádica");
+        }
+        
+        if(rbtSi.isSelected()){
+            p.settHijos(true);
+        }
+        else if(rbtNo.isSelected()){
+            p.settHijos(false);
+        }
+        
+        if(rbqSi.isSelected()){
+            p.setqHijos(true);
+        }
+        else if(rbqNo.isSelected()){
+            p.setqHijos(false);
+        }
+        
+        p.setInteres(cmbInteres.getSelectedItem().toString());
+        
+        p.setArte(jSlider1.getValue());
+        p.setDeporte(jSlider2.getValue());
+        p.setPolitica(jSlider3.getValue());
+        
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -342,10 +387,10 @@ public class VentanaPreferencias extends javax.swing.JFrame {
     private javax.swing.JLabel lArte;
     private javax.swing.JLabel lDeportes;
     private javax.swing.JLabel lPolitica;
-    private javax.swing.JRadioButton rbEsporadica1;
+    private javax.swing.JRadioButton rbEsporadica;
     private javax.swing.JRadioButton rbSerio;
-    private javax.swing.JRadioButton rbqNo1;
-    private javax.swing.JRadioButton rbqSi1;
+    private javax.swing.JRadioButton rbqNo;
+    private javax.swing.JRadioButton rbqSi;
     private javax.swing.JRadioButton rbtNo;
     private javax.swing.JRadioButton rbtSi;
     // End of variables declaration//GEN-END:variables

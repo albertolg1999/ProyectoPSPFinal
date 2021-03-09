@@ -21,6 +21,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
@@ -217,11 +218,7 @@ public class IniciarSesion extends javax.swing.JFrame {
         return new String(Seguridad.resumirPwd(passStr));
     }
 
-    private void initPreferences(Usuario user) {
-        //PreferencesView prf = new PreferencesView(true, user, servidor, clavePrivPropia, clavePubAjena);
-        //prf.setVisible(true);
-        this.dispose();
-    }
+    
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
        if (!txtUsuario.getText().isEmpty() && pswPassword.getPassword().length != 0) {
 
@@ -242,7 +239,7 @@ public class IniciarSesion extends javax.swing.JFrame {
                 short res = (short) Seguridad.descifrar(clavePrivPropia, so);
                 System.out.println("Rspuesta Servidor " + res);
 
-                switchUser(res);
+                ComprobarUsuarioExiste(res);
 
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
                     | IOException | IllegalBlockSizeException | ClassNotFoundException | BadPaddingException ex) {
@@ -262,7 +259,7 @@ public class IniciarSesion extends javax.swing.JFrame {
      * 
      * @param res 
      */
-    private void switchUser(short res) {
+    private void ComprobarUsuarioExiste(short res) {
         try {
             switch (res) {
 
@@ -278,7 +275,7 @@ public class IniciarSesion extends javax.swing.JFrame {
                     so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                     short code = (short) Seguridad.descifrar(clavePrivPropia, so);
                     System.out.println(code);
-                    initSwitchUserData(code, user);
+                    DatosUsuario(code, user);
                     break;
 
                 case CodigosUso.EMAIL_LOGIN_INCORRECTO:
@@ -317,9 +314,9 @@ public class IniciarSesion extends javax.swing.JFrame {
      * @param code
      * @param userLog 
      */
-    private void initSwitchUserData(short code, Usuario userLog) {
+    private void DatosUsuario(short code, Usuario userLog) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
-        System.out.println("d "+code );
+        //System.out.println("d "+code );
         switch (code) {
             case CodigosUso.CODE_USER_NOT_ACTIVATED:
                 JOptionPane.showMessageDialog(null, "Usuario no activado espera a que lo haga un Admin");
@@ -336,8 +333,30 @@ public class IniciarSesion extends javax.swing.JFrame {
             break;
             case CodigosUso.CODE_USER_USER:
                 
+                try {
+                    enviarRespuesta(CodigosUso.C_Preferencias);
+                    so = Seguridad.cifrar(clavePubAjena, userLog);
+                    Comunicacion.enviarObjeto(servidor, so);
+                    
+                    so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                    code = (short) Seguridad.descifrar(clavePrivPropia, so);
+                    System.out.println(userLog.getId());
+                    if(code==CodigosUso.C_Preferencias_notiene){
+                        System.out.println("no tiene preferencias en la BD");
+                        
+                        VentanaPreferencias pf=new VentanaPreferencias(userLog);
+                        pf.show();
+                        this.hide();
+                    }
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
                 //iniciamos menu principal en modo usuario
-                IniciarVentanaPrincipal(true);
+                //IniciarVentanaPrincipal(false);
                 break;
 
             case CodigosUso.CODE_USER_ADMIN:
