@@ -201,11 +201,26 @@ public class VentanaAdministracion extends javax.swing.JFrame {
     private void btnActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarActionPerformed
         try {
             enviarRespuesta(CodigosUso.CODE_ACTIVAR_USER);
-            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
             
-            ArrayList<Usuario> res = (ArrayList<Usuario>) Seguridad.descifrar(clavePrivPropia, so);
-            VentanaAdministracion pa=new VentanaAdministracion(res,servidor,clavePrivPropia,clavePubAjena);
-            pa.show();
+            Usuario us=new Usuario();
+            int row=tabla.getSelectedRow();
+            
+            us=res.get(row);
+            System.out.println(us.getName());
+            so = Seguridad.cifrar(clavePubAjena, us);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+            System.out.println(orden);
+            
+            if(orden!=0){
+                System.out.println("Activado");
+            }
+            
+            this.res=obtenerUsuarios();
+            
+            cargarTablaUsuarios(res);
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -243,6 +258,10 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             if(orden!=0){
                 System.out.println("Eliminado");
             }
+            
+            this.res=obtenerUsuarios();
+            
+            cargarTablaUsuarios(res);
             
             
         } catch (IOException ex) {
@@ -288,6 +307,37 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         }
         
         tabla.setModel(tablalist);
+    }
+    
+    private ArrayList<Usuario> obtenerUsuarios( ){
+        ArrayList<Usuario> res=null;
+        
+        
+        try {
+            enviarRespuesta(CodigosUso.CODE_USER_ADMIN);
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            res = (ArrayList<Usuario>) Seguridad.descifrar(clavePrivPropia, so);
+           
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return res;
+        
     }
     
     /**
