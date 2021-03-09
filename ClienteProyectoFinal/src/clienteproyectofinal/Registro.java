@@ -246,8 +246,10 @@ public class Registro extends javax.swing.JFrame {
         try {
             
             String pwdR = resumirPwd();
+            System.out.println(pwdR);
             //Creamos el usuario a registrar en la base de datos
-            Usuario user = new Usuario( name, email, pwdR);
+            Usuario user = new Usuario( name, email, pwdR,false);
+            System.out.println(user.getPwd());
             so = Seguridad.cifrar(this.clavePubAjena, user);
             Comunicacion.enviarObjeto(servidor, so);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {

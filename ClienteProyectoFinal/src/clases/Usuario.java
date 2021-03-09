@@ -40,7 +40,7 @@ public class Usuario implements Serializable{
     public Usuario(String name, String email, String pwdR) {
         this.name = name;
         this.email = email;
-        this.pwd = pwd;
+        this.pwd = pwdR;
     }
 
     public String getRol() {
