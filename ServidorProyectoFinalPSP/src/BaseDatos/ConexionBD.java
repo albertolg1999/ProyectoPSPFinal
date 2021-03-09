@@ -106,7 +106,7 @@ public class ConexionBD {
         
         try{
             
-            sentencia = "UPDATE " + ConstantesBD.TUsuarios + " SET activado = true WHERE id = '" + id + "'";
+            sentencia = "UPDATE " + ConstantesBD.TUsuarios + " SET activado = 1 WHERE id_usuario = '" + id + "'";
             
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 exito = true;

@@ -129,6 +129,14 @@ public class HiloCliente extends Thread {
                                     so = (SealedObject) Comunicacion.recibirObjeto(cliente);
                                     orden = (short) Seguridad.descifrar(clavePrivPropia, so);
                                     switch (orden) {
+                                         case CodigosUso.CODE_USER_ADMIN:
+                                            System.out.println("aqui estoy");
+                        
+                                            lista=ConexionBD.obtenerUsuarios();
+                        
+                                            so = Seguridad.cifrar(clavePubAjena, lista);
+                                            Comunicacion.enviarObjeto(cliente, so);
+                                            break;
                                         case CodigosUso.CODE_ACTIVAR_USER:
                                             System.out.println("ORDEN ACTIVAR");
                                             activarUsuario();
@@ -188,7 +196,7 @@ public class HiloCliente extends Thread {
     
     private void activarUsuario(){
         Usuario u = recibirUsuario();
-        if (UsuariosBD.activarUser(u.getId())) {
+        if (ConexionBD.activarUser(u.getId())) {
             enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
             System.out.println("AC OK");
         }else{
