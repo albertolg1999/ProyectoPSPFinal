@@ -9,7 +9,6 @@ import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.Seguridad;
 import clases.Usuario;
-import clases.Util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -200,7 +199,7 @@ public class Registro extends javax.swing.JFrame {
             if (!email.isEmpty() && !name.isEmpty() && !pwd.isEmpty()) {
                 if(pwd.equals(Confpwd)){
                     //envio de modo SIGN UP al hilo que escucha en el servidor
-                    SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.SIGN_UP);
+                    SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.Registro);
                     Comunicacion.enviarObjeto(servidor, so);
                 
                     crearUsuario(name, email);
@@ -211,12 +210,12 @@ public class Registro extends javax.swing.JFrame {
 
                     switch (res) {
                         
-                        case CodigosUso.CODE_SIGNUP_CORRECTO:
+                        case CodigosUso.C_Registro_CORRECTO:
                             JOptionPane.showMessageDialog(null, "Usuario registrado con exito");
                             this.dispose();
                             break;
 
-                        case CodigosUso.CODE_SIGNUP_EMAIL:
+                        case CodigosUso.C_SIGNUP_EMAIL:
                             JOptionPane.showMessageDialog(null, "Este email ya existe en la BD");
                             break;
                     }

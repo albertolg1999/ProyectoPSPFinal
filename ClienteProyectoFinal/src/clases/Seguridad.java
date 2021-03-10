@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Signature;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -35,6 +36,24 @@ public class Seguridad {
         claves[1] = clavepubl;
 
         return claves;
+    }
+    
+    public byte[] firmar(PrivateKey clavePrivada, String msg) throws Exception {
+        byte[] firma = null;
+        Signature dsa = Signature.getInstance("SHA1withDSA");
+        dsa.initSign(clavePrivada);
+        dsa.update(msg.getBytes());
+        firma = dsa.sign(); //Mensaje firmado.
+        return firma;
+    }
+
+    public boolean verifica(PublicKey clavePublica, String msg, byte[] firma) throws Exception {
+        Signature verifica_dsa = Signature.getInstance("SHA1withDSA");
+        verifica_dsa.initVerify(clavePublica);
+
+        //msg = "Otra cosa";
+        verifica_dsa.update(msg.getBytes());
+        return verifica_dsa.verify(firma);
     }
     
     public static SealedObject cifrar(PublicKey claveAjena, Object o) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IOException, IllegalBlockSizeException {

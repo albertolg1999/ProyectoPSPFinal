@@ -32,6 +32,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     private String modo;
     private SealedObject so;
     private VentanaAdministracion va;
+    Usuario u;
     /**
      * Creates new form VentanaUsuario
      */
@@ -42,6 +43,34 @@ public class VentanaUsuario extends javax.swing.JFrame {
         this.clavePubAjena = pubAjena;
         this.modo=modo;
         this.va=va;
+        
+        if(modo.equals("modificar")){
+            jLabel4.setVisible(false);
+            jLabel5.setVisible(false);
+            pswPass.setVisible(false);
+            pswCPass.setVisible(false);
+        }
+    }
+    /**
+     * Creates new form VentanaUsuario
+     */
+    public VentanaUsuario(Socket servidor, PrivateKey priv, PublicKey pubAjena,String modo,VentanaAdministracion va,Usuario u) {
+        initComponents();
+        this.servidor = servidor;
+        this.clavePrivPropia = priv;
+        this.clavePubAjena = pubAjena;
+        this.modo=modo;
+        this.va=va;
+        this.u=u;
+        
+        if(modo.equals("modificar")){
+            txtUsuario.setText(u.getName());
+            txtEmail.setText(u.getEmail());
+            jLabel4.setVisible(false);
+            jLabel5.setVisible(false);
+            pswPass.setVisible(false);
+            pswCPass.setVisible(false);
+        }
     }
 
     public VentanaUsuario() {
@@ -175,7 +204,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-        if(modo=="nuevo"){
+        if(modo.equals("nuevo")){
             String name = txtUsuario.getText();
             String email = txtEmail.getText();
             String pwd = new String(pswPass.getPassword());
@@ -186,7 +215,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 if (!email.isEmpty() && !name.isEmpty() && !pwd.isEmpty()) {
                     if(pwd.equals(Confpwd)){
                         //envio de modo SIGN UP al hilo que escucha en el servidor
-                        SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.CODE_CREAR_USER);
+                        SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.C_crearUsuario);
                         Comunicacion.enviarObjeto(servidor, so);
 
                         crearUsuario(name, email);
@@ -197,12 +226,12 @@ public class VentanaUsuario extends javax.swing.JFrame {
 
                         switch (res) {
 
-                            case CodigosUso.CODE_SIGNUP_CORRECTO:
+                            case CodigosUso.C_Registro_CORRECTO:
                                 JOptionPane.showMessageDialog(null, "Usuario registrado con exito");
                                 this.dispose();
                                 break;
 
-                            case CodigosUso.CODE_SIGNUP_EMAIL:
+                            case CodigosUso.C_SIGNUP_EMAIL:
                                 JOptionPane.showMessageDialog(null, "Este email ya existe en la BD");
                                 break;
                         }
@@ -225,6 +254,51 @@ public class VentanaUsuario extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
             }
+        else {
+            String name = txtUsuario.getText();
+            String email = txtEmail.getText();
+
+            try {
+
+                if (!email.isEmpty() && !name.isEmpty() ) {
+                    
+                        SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.C_modificarUsuario);
+                        Comunicacion.enviarObjeto(servidor, so);
+
+                        crearUsuarioModificar(name, email,u.getId());
+
+                        
+                        so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                        short res = (short) Seguridad.descifrar(clavePrivPropia, so);
+
+                        switch (res) {
+
+                            case CodigosUso.C_Registro_CORRECTO:
+                                JOptionPane.showMessageDialog(null, "Usuario modificado con exito");
+                                this.dispose();
+                                break;
+
+                            case CodigosUso.C_SIGNUP_EMAIL:
+                                JOptionPane.showMessageDialog(null, "Este email ya existe en la BD");
+                                break;
+                        }
+
+                       
+                    
+
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Debe rellenar todos los campos");
+                }
+                
+                this.va.res=this.va.obtenerUsuarios();
+            
+                this.va.cargarTablaUsuarios(this.va.res);
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                    | IllegalBlockSizeException | ClassNotFoundException | BadPaddingException ex) {
+                ex.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_btnAceptarActionPerformed
 
     
@@ -236,6 +310,16 @@ public class VentanaUsuario extends javax.swing.JFrame {
             //Creamos el usuario a registrar en la base de datos
             Usuario user = new Usuario( name, email, pwdR,false);
             System.out.println(user.getPwd());
+            so = Seguridad.cifrar(this.clavePubAjena, user);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void crearUsuarioModificar(String name, String email,int i) {
+        try {
+            Usuario user = new Usuario( name, email,i);
             so = Seguridad.cifrar(this.clavePubAjena, user);
             Comunicacion.enviarObjeto(servidor, so);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {

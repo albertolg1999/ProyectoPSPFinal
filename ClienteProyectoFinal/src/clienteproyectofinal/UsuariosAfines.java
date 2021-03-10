@@ -5,15 +5,43 @@
  */
 package clienteproyectofinal;
 
+import clases.Perfil;
+import clases.Usuario;
+import java.net.Socket;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import javax.crypto.SealedObject;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author disen
  */
 public class UsuariosAfines extends javax.swing.JFrame {
-
+    Usuario u;
+    ArrayList<Perfil> res;
+    DefaultTableModel tablalist;
+    
+    private Socket servidor;
+    private PrivateKey clavePrivPropia;
+    private PublicKey clavePubAjena;
+    
+    private SealedObject so;
     /**
      * Creates new form UsuariosAfines
      */
+    public UsuariosAfines(Usuario userLog,ArrayList<Perfil>per,Socket servidor, PrivateKey priv, PublicKey pubAjena) {
+        initComponents();
+        this.u=userLog;
+        this.res=per;
+       
+        this.servidor = servidor;
+        this.clavePrivPropia = priv;
+        this.clavePubAjena = pubAjena;
+        cargarTablaUsuarios(res);
+    }
+
     public UsuariosAfines() {
         initComponents();
     }
@@ -28,12 +56,12 @@ public class UsuariosAfines extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabla = new javax.swing.JTable();
         btnMeGusta = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -44,7 +72,7 @@ public class UsuariosAfines extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabla);
 
         btnMeGusta.setText("Me gusta");
 
@@ -70,6 +98,24 @@ public class UsuariosAfines extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    protected void cargarTablaUsuarios( ArrayList<Perfil> res){
+        tablalist=new DefaultTableModel();
+        tablalist.addColumn("Usuario");
+        tablalist.addColumn("Edad");
+        tablalist.addColumn("Localidad");
+        tablalist.addColumn("Sexo");
+        for (int x = 0; x < res.size(); x++) {
+                Perfil p=(Perfil)res.get(x);
+                //System.out.println(u.getName()+" "+u.isActivado());
+                tablalist.addRow(new Object[]{p.getName(),p.getEdad(),p.getLocalidad(),p.getSexo()});
+                
+                            
+
+        }
+        
+        tabla.setModel(tablalist);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -108,6 +154,6 @@ public class UsuariosAfines extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnMeGusta;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 }

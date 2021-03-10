@@ -401,7 +401,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
             p.setPolitica(jSlider3.getValue());
             
             if(modo.equals("crear")){
-               enviarRespuesta(CodigosUso.CODE_PREFERENCES_CREATE);
+               enviarRespuesta(CodigosUso.C_Preferencias_CREATE);
             
             
                 so = Seguridad.cifrar(clavePubAjena, p);
@@ -411,7 +411,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 
                 so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                 short orden2 = (short) Seguridad.descifrar(clavePrivPropia, so);
-                if(orden2==CodigosUso.CODE_PREFERENCES_CORRECTO){
+                if(orden2==CodigosUso.C_Preferencias_CORRECTO){
                     
                     VentanaPrincipal vp=new VentanaPrincipal(u,false,servidor,clavePrivPropia,clavePubAjena);
                     vp.show();
@@ -420,7 +420,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 } 
             }
             else{
-                enviarRespuesta(CodigosUso.CODE_PREFERENCES_UPDATE);
+                enviarRespuesta(CodigosUso.C_Preferencias_UPDATE);
             
             
                 so = Seguridad.cifrar(clavePubAjena, p);
@@ -428,7 +428,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 
                 so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                 short orden2 = (short) Seguridad.descifrar(clavePrivPropia, so);
-                if(orden2==CodigosUso.CODE_PREFERENCES_CORRECTO){
+                if(orden2==CodigosUso.C_Preferencias_CORRECTO){
                     
                     JOptionPane.showMessageDialog(null, "Preferencias modificadas correctamente");
                     this.hide();

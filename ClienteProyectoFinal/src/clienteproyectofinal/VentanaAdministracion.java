@@ -150,6 +150,11 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         btnModificar.setText("Modificar");
         btnModificar.setToolTipText("Añadir Usuario");
         btnModificar.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -216,7 +221,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
 
     private void btnActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarActionPerformed
         try {
-            enviarRespuesta(CodigosUso.CODE_ACTIVAR_USER);
+            enviarRespuesta(CodigosUso.C_activarUsuario);
             
             Usuario us=new Usuario();
             int row=tabla.getSelectedRow();
@@ -257,29 +262,32 @@ public class VentanaAdministracion extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         try {
-            enviarRespuesta(CodigosUso.CODE_ELIMINAR_USER);
+             if(tabla.getSelectedRow()!=-1){
+                 enviarRespuesta(CodigosUso.C_eliminarUsuario);
             
-            Usuario us=new Usuario();
-            int row=tabla.getSelectedRow();
+                Usuario us=new Usuario();
+                int row=tabla.getSelectedRow();
+
+                us=res.get(row);
+                System.out.println(us.getName());
+                so = Seguridad.cifrar(clavePubAjena, us);
+                Comunicacion.enviarObjeto(servidor, so);
+
+
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+                System.out.println(orden);
+
+                if(orden!=0){
+                    System.out.println("Eliminado");
+                    JOptionPane.showMessageDialog(null, "Usuario eliminado correctamente");
+                }
+
+                this.res=obtenerUsuarios();
+
+                cargarTablaUsuarios(res);
+             }
             
-            us=res.get(row);
-            System.out.println(us.getName());
-            so = Seguridad.cifrar(clavePubAjena, us);
-            Comunicacion.enviarObjeto(servidor, so);
-            
-            
-            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-            short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
-            System.out.println(orden);
-            
-            if(orden!=0){
-                System.out.println("Eliminado");
-                JOptionPane.showMessageDialog(null, "Usuario eliminado correctamente");
-            }
-            
-            this.res=obtenerUsuarios();
-            
-            cargarTablaUsuarios(res);
             
             
         } catch (IOException ex) {
@@ -303,7 +311,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
        try {
            if(tabla.getSelectedRow()!=-1){
                
-               enviarRespuesta(CodigosUso.CODE_CREAR_ADMIN);
+               enviarRespuesta(CodigosUso.C_crearAdmin);
             
                 Usuario us=new Usuario();
                 int row=tabla.getSelectedRow();
@@ -320,12 +328,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
                 if(orden==100){
                     JOptionPane.showMessageDialog(null, "Usuario ascendido correctamente");
                 }
-
-
-
-
-
-
+                
                 this.res=obtenerUsuarios();
 
                 cargarTablaUsuarios(res);
@@ -356,7 +359,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         try {
             
             if(tabla.getSelectedRow()!=-1){
-                enviarRespuesta(CodigosUso.CODE_ELIMINAR_ADMIN);
+                enviarRespuesta(CodigosUso.C_eliminarAdmin);
             
                 Usuario us=new Usuario();
                 int row=tabla.getSelectedRow();
@@ -411,6 +414,16 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         VentanaUsuario vu=new VentanaUsuario(servidor,clavePrivPropia,clavePubAjena,"nuevo",this);
         vu.show();
     }//GEN-LAST:event_btnAñadirActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        if(tabla.getSelectedRow()!=-1){
+            int row=tabla.getSelectedRow();
+
+             Usuario us=res.get(row);
+            VentanaUsuario vu=new VentanaUsuario(servidor,clavePrivPropia,clavePubAjena,"modificar",this,us);
+            vu.show();
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     
     

@@ -258,7 +258,7 @@ public class IniciarSesion extends javax.swing.JFrame {
         try {
             switch (res) {
 
-                case CodigosUso.CODE_USER_EXISTS:
+                case CodigosUso.C_UsuarioExistente:
                     System.out.println("Usuario inicio sesion correctamente");
                     //Recibo usuario existente en la tabla usuario
                     so = (SealedObject) Comunicacion.recibirObjeto(servidor);
@@ -313,11 +313,11 @@ public class IniciarSesion extends javax.swing.JFrame {
 
         //System.out.println("d "+code );
         switch (code) {
-            case CodigosUso.CODE_USER_NOT_ACTIVATED:
+            case CodigosUso.C_UsuarioInactivo:
                 JOptionPane.showMessageDialog(null, "Usuario no activado espera a que lo haga un Admin");
                 break;
 
-            case CodigosUso.PREFERENCES:
+            case CodigosUso.Preferencias:
                 //initPreferences(userLog);
                 break;
 

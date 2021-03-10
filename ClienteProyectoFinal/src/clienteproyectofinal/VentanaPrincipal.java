@@ -38,6 +38,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private PrivateKey clavePrivPropia;
     private PublicKey clavePubAjena;
     private Usuario u;
+    private Preferencias pr;
     
     private SealedObject so;
     /**
@@ -69,6 +70,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             btnAdministrar.setVisible(true);
             btnPerfil.setVisible(false);
             btnPreferencias.setVisible(false);
+            btnAmigos.setVisible(false);
+            btnAfines.setVisible(false);
             btnMensajes.setVisible(false);
             
 
@@ -79,6 +82,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             btnPreferencias.setVisible(true);
             btnMensajes.setVisible(true);
             System.out.println();
+            pr=obtenerPreferencias();
         }
     }
     public VentanaPrincipal() {
@@ -293,7 +297,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreferenciasActionPerformed
         try {
             
-            enviarRespuesta(CodigosUso.CODE_PREFERENCES_SELECT);
+            enviarRespuesta(CodigosUso.C_Preferencias_SELECT);
             
             so = Seguridad.cifrar(clavePubAjena, u);
             Comunicacion.enviarObjeto(servidor, so);
@@ -327,8 +331,75 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnPreferenciasActionPerformed
 
+    private Preferencias obtenerPreferencias(){
+        Preferencias p=null;
+        try {
+            
+            enviarRespuesta(CodigosUso.C_Preferencias_SELECT);
+            
+            so = Seguridad.cifrar(clavePubAjena, u);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            System.out.println("aqui estoy");
+            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            //Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
+            
+            
+            
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return p;
+    }
+    
+    
     private void btnAfinesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfinesActionPerformed
-        // TODO add your handling code here:
+       try {
+            Preferencias pref=obtenerPreferencias();
+            enviarRespuesta(CodigosUso.C_obtenerAfines);
+            
+            so = Seguridad.cifrar(clavePubAjena, pref);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            ArrayList<Perfil> res = (ArrayList<Perfil>) Seguridad.descifrar(clavePrivPropia, so);
+            UsuariosAfines ua=new UsuariosAfines(u,res,servidor,clavePrivPropia,clavePubAjena);
+            ua.show();
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAfinesActionPerformed
 
     private void btnAmigosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAmigosActionPerformed
