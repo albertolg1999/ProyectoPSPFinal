@@ -221,28 +221,36 @@ public class VentanaAdministracion extends javax.swing.JFrame {
 
     private void btnActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActivarActionPerformed
         try {
-            enviarRespuesta(CodigosUso.C_activarUsuario);
+            if(tabla.getSelectedRow()!=-1){
+                enviarRespuesta(CodigosUso.C_activarUsuario);
             
-            Usuario us=new Usuario();
-            int row=tabla.getSelectedRow();
-            
-            us=res.get(row);
-            System.out.println(us.getName());
-            so = Seguridad.cifrar(clavePubAjena, us);
-            Comunicacion.enviarObjeto(servidor, so);
-            
-            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-            short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
-            System.out.println(orden);
-            
-            if(orden!=0){
-                System.out.println("Activado");
-                JOptionPane.showMessageDialog(null, "Usuario activado correctamente");
+                Usuario us=new Usuario();
+                int row=tabla.getSelectedRow();
+
+                us=res.get(row);
+                System.out.println(us.getName());
+                so = Seguridad.cifrar(clavePubAjena, us);
+                Comunicacion.enviarObjeto(servidor, so);
+
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+                System.out.println(orden);
+
+                if(orden!=0){
+                    System.out.println("Activado");
+                    JOptionPane.showMessageDialog(null, "Usuario activado correctamente");
+                }
+
+                this.res=obtenerUsuarios();
+
+                cargarTablaUsuarios(res);
             }
             
-            this.res=obtenerUsuarios();
+            else{
+                JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
+            }
             
-            cargarTablaUsuarios(res);
+            
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -419,9 +427,12 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         if(tabla.getSelectedRow()!=-1){
             int row=tabla.getSelectedRow();
 
-             Usuario us=res.get(row);
+            Usuario us=res.get(row);
             VentanaUsuario vu=new VentanaUsuario(servidor,clavePrivPropia,clavePubAjena,"modificar",this,us);
             vu.show();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
         }
     }//GEN-LAST:event_btnModificarActionPerformed
 

@@ -12,6 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import javax.crypto.SealedObject;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -75,6 +76,11 @@ public class UsuariosAfines extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla);
 
         btnMeGusta.setText("Me gusta");
+        btnMeGusta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMeGustaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,6 +103,16 @@ public class UsuariosAfines extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnMeGustaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMeGustaActionPerformed
+        if(tabla.getSelectedRow()!=-1){
+            
+        }
+        
+        else{
+            JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
+        }
+    }//GEN-LAST:event_btnMeGustaActionPerformed
 
     protected void cargarTablaUsuarios( ArrayList<Perfil> res){
         tablalist=new DefaultTableModel();

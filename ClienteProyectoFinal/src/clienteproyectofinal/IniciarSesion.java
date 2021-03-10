@@ -311,8 +311,9 @@ public class IniciarSesion extends javax.swing.JFrame {
      */
     private void DatosUsuario(short code, Usuario userLog) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
-        //System.out.println("d "+code );
+        System.out.println("d "+code );
         switch (code) {
+            
             case CodigosUso.C_UsuarioInactivo:
                 JOptionPane.showMessageDialog(null, "Usuario no activado espera a que lo haga un Admin");
                 break;
