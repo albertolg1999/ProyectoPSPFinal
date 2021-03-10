@@ -542,6 +542,32 @@ public class ConexionBD {
         return listaAmigos;
     }
     
+    public synchronized static ArrayList<Mensaje> leerMensaje(int id) {
+        ArrayList<Mensaje> listaMensajes =new ArrayList<Mensaje>();
+        Mensaje m;
+            
+            
+        
+        sentencia="SELECT "+ ConstantesBD.TMensaje+".mensajes as mensaje, "+ ConstantesBD.TUsuarios+".Usuario as nombre FROM "+ConstantesBD.TMensaje+","+ConstantesBD.TUsuarios+" WHERE "+ConstantesBD.TMensaje+".id_usuario="+ConstantesBD.TUsuarios+".Id_Usuario and "+ConstantesBD.TMensaje+".receptor="+id+"";
+        System.out.println(sentencia);
+        try {
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                m = new Mensaje();
+                m.setMensaje(Conj_Registros.getString("mensaje"));
+                m.setRemitente(Conj_Registros.getString("nombre"));
+                
+                listaMensajes.add(m);
+                
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listaMensajes;
+    }
+    
     public synchronized static Perfil obtenerPerfil(int id) {
         Perfil p = null;
         Blob blob;

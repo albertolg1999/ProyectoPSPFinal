@@ -16,12 +16,31 @@ public class Mensaje implements Serializable{
     private int idUsLog;
     private int idUsAmigo;
     private String mensaje;
+    private String Remitente;
 
     public Mensaje(int idUsLog, int idUsAmigo, String mensaje) {
         this.idUsLog = idUsLog;
         this.idUsAmigo = idUsAmigo;
         this.mensaje = mensaje;
     }
+
+    public Mensaje() {
+        
+    }
+    public Mensaje(String mensaje,String remitente) {
+        this.Remitente=remitente;
+        this.mensaje=mensaje;
+    }
+
+    public String getRemitente() {
+        return Remitente;
+    }
+
+    public void setRemitente(String Remitente) {
+        this.Remitente = Remitente;
+    }
+    
+    
 
     public int getIdUsLog() {
         return idUsLog;

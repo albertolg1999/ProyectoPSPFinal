@@ -130,6 +130,13 @@ public class HiloCliente extends Thread {
                         enviarMensaje();
                         
                         break;
+                    
+                        
+                    case CodigosUso.C_leerMensaje:
+                        System.out.println("orden leer mensajes");
+                        leerMensajes();
+                        
+                        break;
                         
                     //crear preferencias
                     case CodigosUso.C_Preferencias_CREATE:
@@ -577,6 +584,31 @@ public class HiloCliente extends Thread {
             so = Seguridad.cifrar(clavePubAjena, lista);
             Comunicacion.enviarObjeto(cliente, so);
              System.out.println("enviado");
+            //Introducimos las preferencias en la base de datos
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void leerMensajes() {
+         try {
+            //recibe las preferencias del usuario
+            System.out.println("leyendo");
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            int id = (int) Seguridad.descifrar(clavePrivPropia, so);
+             //System.out.println(prefs);
+            
+            ArrayList<Mensaje> lista;
+            lista=ConexionBD.leerMensaje(id);
+                        
+            so = Seguridad.cifrar(clavePubAjena, lista);
+            Comunicacion.enviarObjeto(cliente, so);
+             System.out.println("enviados mensajes");
             //Introducimos las preferencias en la base de datos
             
 
