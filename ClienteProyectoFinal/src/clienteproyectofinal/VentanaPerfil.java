@@ -55,6 +55,7 @@ public class VentanaPerfil extends javax.swing.JFrame {
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
         CargarDatosPerfil(this.p);
+        setLocationRelativeTo(null);
     }
 
     private VentanaPerfil() {
@@ -106,7 +107,7 @@ public class VentanaPerfil extends javax.swing.JFrame {
         lbl1 = new javax.swing.JLabel();
         cmbSexo = new javax.swing.JComboBox<>();
 
-        lFoto.setText("jLabel1");
+        lFoto.setText("Foto");
 
         btnCambiarImagen.setText("Cambiar Imagen");
         btnCambiarImagen.addActionListener(new java.awt.event.ActionListener() {

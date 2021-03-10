@@ -115,7 +115,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lFoto">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
+            <Property name="text" type="java.lang.String" value="Foto"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnCambiarImagen">

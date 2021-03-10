@@ -49,6 +49,7 @@ public class VentanaEnviarMensaje extends javax.swing.JFrame {
         this.clavePubAjena = clavePubAjena;
         this.idUsAmig=idUsAmig;
         this.idUsLog=idUsLog;
+        setLocationRelativeTo(null);
     }
     
     public VentanaEnviarMensaje() {

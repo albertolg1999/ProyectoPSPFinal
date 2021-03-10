@@ -48,6 +48,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
         cargarTablaUsuarios(res);
+        setLocationRelativeTo(null);
     }
 
     public VentanaAdministracion() {

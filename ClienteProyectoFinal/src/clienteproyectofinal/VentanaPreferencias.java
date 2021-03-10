@@ -52,6 +52,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
         this.modo=modo;
+        setLocationRelativeTo(null);
     }
 
     public VentanaPreferencias(Usuario u,Preferencias p,String modo,Socket servidor, PrivateKey priv, PublicKey pubAjena) {
@@ -63,6 +64,7 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
         CargarPreferencias(this.p);
+        setLocationRelativeTo(null);
     }
 
     /**

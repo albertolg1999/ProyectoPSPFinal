@@ -46,6 +46,7 @@ public class Amigos extends javax.swing.JFrame {
         this.clavePrivPropia = clavePrivPropia;
         this.clavePubAjena = clavePubAjena;
         cargarTablaUsuarios(res);
+        setLocationRelativeTo(null);
     }
     
     protected void cargarTablaUsuarios( ArrayList<Perfil> res){

@@ -8,6 +8,7 @@ package clienteproyectofinal;
 import RSMaterialComponent.RSTableMetroCustom;
 import clases.CodigosUso;
 import clases.Comunicacion;
+import clases.Mensaje;
 import clases.Perfil;
 import clases.Preferencias;
 import clases.Seguridad;
@@ -51,6 +52,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.clavePubAjena = pubAjena;
         initComponents();
         cargarVentanaRol();
+        setLocationRelativeTo(null);
     }
 
     VentanaPrincipal(Usuario userLog, boolean admin, Socket servidor, PrivateKey clavePrivPropia, PublicKey clavePubAjena) {
@@ -61,6 +63,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.u=userLog;
         initComponents();
         cargarVentanaRol();
+        setLocationRelativeTo(null);
     }
 
     private void cargarVentanaRol() {
@@ -220,7 +223,37 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnMensajesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMensajesActionPerformed
-        // TODO add your handling code here:
+        try {
+            
+            enviarRespuesta(CodigosUso.C_leerMensaje);
+            
+            so = Seguridad.cifrar(clavePubAjena, this.u.getId());
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            
+            ArrayList<Mensaje> res = (ArrayList<Mensaje>) Seguridad.descifrar(clavePrivPropia, so);
+            
+            MisMensajes msi=new MisMensajes(res);
+            msi.show();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnMensajesActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed

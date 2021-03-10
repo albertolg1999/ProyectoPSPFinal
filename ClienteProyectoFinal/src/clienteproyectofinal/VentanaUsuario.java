@@ -43,8 +43,10 @@ public class VentanaUsuario extends javax.swing.JFrame {
         this.clavePubAjena = pubAjena;
         this.modo=modo;
         this.va=va;
+        setLocationRelativeTo(null);
         
         if(modo.equals("modificar")){
+            jLabel1.setText("Modificar Usuario");
             jLabel4.setVisible(false);
             jLabel5.setVisible(false);
             pswPass.setVisible(false);
@@ -62,6 +64,7 @@ public class VentanaUsuario extends javax.swing.JFrame {
         this.modo=modo;
         this.va=va;
         this.u=u;
+        setLocationRelativeTo(null);
         
         if(modo.equals("modificar")){
             txtUsuario.setText(u.getName());

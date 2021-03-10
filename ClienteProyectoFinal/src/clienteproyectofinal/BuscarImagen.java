@@ -16,6 +16,8 @@ public class BuscarImagen extends javax.swing.JFrame {
      */
     public BuscarImagen() {
         initComponents();
+        setLocationRelativeTo(null);
+        
     }
 
     /**

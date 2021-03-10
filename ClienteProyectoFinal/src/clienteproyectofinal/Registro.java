@@ -49,6 +49,7 @@ public class Registro extends javax.swing.JFrame {
         this.servidor = servidor;
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
+        setLocationRelativeTo(null);
     }
 
     private Registro() {
