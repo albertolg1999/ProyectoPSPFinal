@@ -179,6 +179,12 @@ public class ConexionBD {
                         exito = true;
                     }
                     
+                    sentencia = "DELETE FROM " + ConstantesBD.TAmigos + " WHERE id_usuario = " + id + "";
+
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+                    
                     sentencia = "DELETE FROM " + ConstantesBD.TUsuarios + " WHERE id_usuario = " + id + "";
 
                     if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
@@ -186,6 +192,24 @@ public class ConexionBD {
                     }
         
            
+        
+        return exito;
+    }
+    
+    public synchronized static boolean añadirAmigos(int idUsLog,int idUsAmigo) throws SQLException {
+
+        boolean exito = false;
+
+            sentencia = "INSERT INTO " + ConstantesBD.TAmigos + " ( id_usuario, amigo, amigos) "
+                    + "values(" + idUsLog + "," + idUsAmigo
+                    + "," + 1 +")";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                System.out.println("Amistad añadida correctamente");
+                
+                exito = true;
+            }
+        
         
         return exito;
     }

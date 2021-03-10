@@ -106,12 +106,18 @@ public class HiloCliente extends Thread {
                         break;
                         
                     case CodigosUso.C_obtenerAfines:
-                        System.out.println("enviado");
+                        //System.out.println("enviado");
                         buscarAfines();
                         System.out.println("enviado");
                         System.out.println("");
                         break;
 
+                    case CodigosUso.C_añadirAmigos:
+                        System.out.println("orden añadir amigos");
+                        añadirAmigos();
+                        
+                        break;
+                        
                     //crear preferencias
                     case CodigosUso.C_Preferencias_CREATE:
                         System.out.println("ORDEN PREFS");
@@ -541,6 +547,31 @@ public class HiloCliente extends Thread {
         }
     }
     
+    
+    private void añadirAmigos() throws SQLException {
+         try {
+            //recibe las preferencias del usuario
+            System.out.println("enviado");
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            int idUsLog = (int) Seguridad.descifrar(clavePrivPropia, so);
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            int idUsAmigo = (int) Seguridad.descifrar(clavePrivPropia, so);
+            
+            if(ConexionBD.añadirAmigos(idUsLog,idUsAmigo)){
+                System.out.println("INSERT CORRECT");
+            }
+                        
+            
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
     
     private void modificarPerfil() {
          try {
