@@ -19,10 +19,11 @@ import javax.swing.table.DefaultTableModel;
  * @author disen
  */
 public class Amigos extends javax.swing.JFrame {
-
+    DefaultTableModel tablalist;
+    
     Usuario u;
     ArrayList<Perfil> res;
-    DefaultTableModel tablalist;
+    
     
     private Socket servidor;
     private PrivateKey clavePrivPropia;
@@ -58,8 +59,6 @@ public class Amigos extends javax.swing.JFrame {
                 //System.out.println(u.getName()+" "+u.isActivado());
                 tablalist.addRow(new Object[]{p.getName(),p.getEdad(),p.getLocalidad(),p.getSexo()});
                 
-                            
-
         }
         
         tabla.setModel(tablalist);
@@ -93,6 +92,11 @@ public class Amigos extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tabla);
 
         btnEnviarMensaje.setText("Enviar Mensaje");
+        btnEnviarMensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarMensajeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -126,6 +130,17 @@ public class Amigos extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarMensajeActionPerformed
+        if(tabla.getSelectedRow()!=-1){
+            Perfil us=new Perfil();
+            int row=tabla.getSelectedRow();
+                
+            us=res.get(row);
+            VentanaEnviarMensaje vem=new VentanaEnviarMensaje(this.u.getId(),us.getId(),servidor,clavePrivPropia,clavePubAjena);
+            vem.show();
+        }
+    }//GEN-LAST:event_btnEnviarMensajeActionPerformed
 
     /**
      * @param args the command line arguments

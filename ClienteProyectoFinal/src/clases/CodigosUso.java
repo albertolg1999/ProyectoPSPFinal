@@ -59,4 +59,7 @@ public class CodigosUso {
     public static final short C_obtenerAfines = 34;
     public static final short C_añadirAmigos = 35;
     public static final short C_obtenerAmigos = 36;
+    
+    public static final short C_enviarMensaje = 37;
+    public static final short C_leerMensaje = 38;
 }
