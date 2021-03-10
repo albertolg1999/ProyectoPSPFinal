@@ -372,8 +372,9 @@ public class HiloCliente extends Thread {
                 so = Seguridad.cifrar(clavePubAjena, userLogueado);
                 System.out.println("Usuario Logueado"+userLogueado.getName()+" id:"+userLogueado.getId());
                 Comunicacion.enviarObjeto(cliente, so);
-                System.out.println("h");
-                ComprobarTipoUsuario();
+                //System.out.println("h");
+                ComprobarUsuarioActivado();
+                //ComprobarTipoUsuario();
 
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
                 ex.printStackTrace();
@@ -421,7 +422,9 @@ public class HiloCliente extends Thread {
         System.out.println(rol);
         switch (rol) {
             case ConstantesRoles.ROL_USER:
+                //ComprobarUsuarioActivado();
                 enviarRespuesta(CodigosUso.CODE_USER_USER);
+                
                 ComprobarPreferenciasUsuario();
                 break;
 

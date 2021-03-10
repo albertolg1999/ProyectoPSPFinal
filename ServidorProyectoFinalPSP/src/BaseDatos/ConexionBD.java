@@ -444,8 +444,9 @@ public class ConexionBD {
             else{
                 qhijos=0;
             }
-        sentencia = "SELECT * FROM " + ConstantesBD.TPerfil + " WHERE  id_usuario=(Select id_usuario from"+ConstantesBD.TPref+" WHERE relaccion='"+pref.getRelacion()+"', interes='"+pref.getInteres()+"', arte>="+pref.getArte()+", deporte>="+pref.getDeporte()+", politica>="+pref.getPolitica()+", thijos="+thijos+", qhijos="+qhijos+")";
-
+        
+        sentencia="SELECT * FROM "+ ConstantesBD.TPerfil+" WHERE id_usuario in (Select id_usuario from "+ ConstantesBD.TPref+" WHERE relaccion='"+pref.getRelacion()+"' and interes='"+pref.getInteres()+"' and arte>= "+pref.getArte() +" and deporte>= "+pref.getDeporte()+" and politica>= "+pref.getPolitica()+" and thijos= "+thijos+" and qhijos= "+qhijos+")";
+        System.out.println(sentencia);
         try {
             Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
 
@@ -454,7 +455,7 @@ public class ConexionBD {
                 p.setId(Conj_Registros.getInt("id_usuario"));
                 p.setName(Conj_Registros.getString("usuario"));
                 p.setLocalidad(Conj_Registros.getString("localidad"));
-                p.setName(Conj_Registros.getString("usuario"));
+                p.setEdad(Conj_Registros.getInt("edad"));
                 p.setSexo(Conj_Registros.getString("sexo"));
                 
                 listaAfines.add(p);
