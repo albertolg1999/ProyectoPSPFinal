@@ -21,17 +21,20 @@ public class Perfil implements Serializable{
     private int edad;
     private String contraseña;
     private String Localidad;
+    private String sexo;
 
-    public Perfil(String name,int id, File foto, int edad, String Localidad) {
+    public Perfil(String name,int id, File foto, int edad, String Localidad,String sexo) {
         this.name = name;
+        this.sexo=sexo;
         this.id=id;
         this.foto = foto;
         this.edad = edad;
         this.Localidad = Localidad;
     }
     
-    public Perfil(String name, byte[] imagen, int edad, String Localidad) {
+    public Perfil(String name, byte[] imagen, int edad, String Localidad,String sexo) {
         this.name = name;
+        this.sexo=sexo;
         this.imagen = imagen;
         this.edad = edad;
         this.Localidad = Localidad;
@@ -40,6 +43,16 @@ public class Perfil implements Serializable{
     public Perfil() {
         
     }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+    
+    
 
     public int getId() {
         return id;

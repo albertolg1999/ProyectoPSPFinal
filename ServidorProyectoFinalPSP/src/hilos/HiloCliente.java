@@ -37,7 +37,7 @@ import javax.crypto.SealedObject;
  * @author disen
  */
 public class HiloCliente extends Thread {
-
+    short i=100;
     private Socket cliente;
     private PublicKey clavePubPropia;
     private PublicKey clavePubAjena;
@@ -185,7 +185,7 @@ public class HiloCliente extends Thread {
                                             System.out.println("ORDEN CREAR");
                                             if (registrarUsuario()) {
                                                 enviarRespuesta(CodigosUso.CODE_SIGNUP_CORRECTO);
-                                                System.out.println("REGIS OK");
+                                                System.out.println("Registrado");
                                             } else {
                                                 enviarRespuesta(CodigosUso.CODE_SIGNUP_EMAIL);
                                             }
@@ -204,8 +204,6 @@ public class HiloCliente extends Thread {
                                 } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
                                         | IllegalBlockSizeException | BadPaddingException ex) {
                                     ex.printStackTrace();
-                                } catch (SQLException ex) {
-                                    Logger.getLogger(HiloAdmin.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             } while (activo);
                         break;
@@ -253,7 +251,7 @@ public class HiloCliente extends Thread {
         System.out.println(u.getId());
         if (ConexionBD.ascUser(u.getId())) {
             //sout
-            //enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
+            enviarRespuesta((short)100);
             System.out.println("ASC OK");
         }else{
             //enviarRespuesta(CodigosUso.ERROR);
@@ -264,6 +262,7 @@ public class HiloCliente extends Thread {
         Usuario u = recibirUsuario();
         if (ConexionBD.DegradarUsuario(u.getId())) {
             //enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
+            enviarRespuesta(i);
             System.out.println("Degradado a usuario normal correctamente");
         }else{
             
@@ -382,7 +381,7 @@ public class HiloCliente extends Thread {
             
             
         } else {
-            System.out.println("hhh");
+            //System.out.println("hhh");
             enviarRespuesta(CodigosUso.C_Preferencias_notiene);
         }
     }
@@ -419,7 +418,7 @@ public class HiloCliente extends Thread {
             so = Seguridad.cifrar(clavePubAjena, p);
             Comunicacion.enviarObjeto(cliente, so);
             
-            System.out.println("perfil enviado");
+            //System.out.println("perfil enviado");
             
             
             
@@ -498,6 +497,7 @@ public class HiloCliente extends Thread {
 
             //Introducimos las preferencias en la base de datos
             if (ConexionBD.modificarPerfil(perfil)) {
+                enviarRespuesta((short)100);
                 System.out.println("Perfil Modificado");
                 //enviarRespuesta(CodigosUso.C);
             }

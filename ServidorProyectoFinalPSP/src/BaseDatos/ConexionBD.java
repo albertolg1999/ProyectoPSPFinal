@@ -5,6 +5,7 @@
  */
 package BaseDatos;
 
+import clases.CodigosUso;
 import clases.ConstantesBD;
 import clases.ConstantesRoles;
 import clases.Perfil;
@@ -271,6 +272,7 @@ public class ConexionBD {
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 exito = true;
                 System.out.println("PREFERENCIA REGISTRADA");
+                
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -337,7 +339,7 @@ public class ConexionBD {
             
             sentencia = "UPDATE " + ConstantesBD.TPerfil + " SET usuario = '" + p.getName()+ "', foto = '"
                     + imagen + "', edad = " + p.getEdad() + ", localidad = '" + p.getLocalidad()
-                    + "' WHERE id_usuario=" +p.getId()+"";
+                    + "', sexo= '"+p.getSexo()+"' WHERE id_usuario=" +p.getId()+"";
             System.out.println(sentencia);
 
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
@@ -425,6 +427,7 @@ public class ConexionBD {
                 p.setEdad(Conj_Registros.getInt("edad"));
                 p.setName(Conj_Registros.getString("usuario"));
                 p.setLocalidad(Conj_Registros.getString("Localidad"));
+                p.setSexo(Conj_Registros.getString("sexo"));
                 if(blob==null){
                     p.setImagen(null);
                 }
