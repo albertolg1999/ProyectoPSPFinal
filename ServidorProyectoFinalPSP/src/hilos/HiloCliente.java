@@ -118,6 +118,12 @@ public class HiloCliente extends Thread {
                         
                         break;
                         
+                     case CodigosUso.C_obtenerAmigos:
+                        System.out.println("orden obtener amigos");
+                        obtenerAmigos();
+                        
+                        break;
+                        
                     //crear preferencias
                     case CodigosUso.C_Preferencias_CREATE:
                         System.out.println("ORDEN PREFS");
@@ -534,6 +540,32 @@ public class HiloCliente extends Thread {
             
             ArrayList<Perfil> lista;
             lista=ConexionBD.obtenerAfines(prefs);
+                        
+            so = Seguridad.cifrar(clavePubAjena, lista);
+            Comunicacion.enviarObjeto(cliente, so);
+             System.out.println("enviado");
+            //Introducimos las preferencias en la base de datos
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    
+    private void obtenerAmigos() {
+         try {
+            //recibe las preferencias del usuario
+            System.out.println("enviado");
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            int id = (int) Seguridad.descifrar(clavePrivPropia, so);
+             //System.out.println(prefs);
+            
+            ArrayList<Perfil> lista;
+            lista=ConexionBD.obtenerAmigos(id);
                         
             so = Seguridad.cifrar(clavePubAjena, lista);
             Comunicacion.enviarObjeto(cliente, so);

@@ -201,7 +201,7 @@ public class ConexionBD {
         boolean exito = false;
 
             sentencia = "INSERT INTO " + ConstantesBD.TAmigos + " ( id_usuario, amigo, amigos) "
-                    + "values(" + idUsLog + "," + idUsAmigo
+                    + "values(" + idUsAmigo + "," + idUsLog
                     + "," + 1 +")";
             
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
@@ -490,6 +490,37 @@ public class ConexionBD {
             ex.printStackTrace();
         }
         return listaAfines;
+    }
+    
+    
+    public synchronized static ArrayList<Perfil> obtenerAmigos(int id) {
+        ArrayList<Perfil> listaAmigos =new ArrayList<Perfil>();
+        Perfil p;
+        int thijos,qhijos;
+            
+            
+        
+        sentencia="SELECT * FROM "+ ConstantesBD.TPerfil+" WHERE id_usuario in (Select amigo from "+ ConstantesBD.TAmigos+" WHERE id_usuario="+id+")";
+        System.out.println(sentencia);
+        try {
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                p = new Perfil();
+                p.setId(Conj_Registros.getInt("id_usuario"));
+                p.setName(Conj_Registros.getString("usuario"));
+                p.setLocalidad(Conj_Registros.getString("localidad"));
+                p.setEdad(Conj_Registros.getInt("edad"));
+                p.setSexo(Conj_Registros.getString("sexo"));
+                
+                listaAmigos.add(p);
+                
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listaAmigos;
     }
     
     public synchronized static Perfil obtenerPerfil(int id) {
