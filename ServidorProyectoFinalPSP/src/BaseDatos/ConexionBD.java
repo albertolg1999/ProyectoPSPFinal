@@ -6,8 +6,16 @@
 package BaseDatos;
 
 import clases.ConstantesBD;
+import clases.ConstantesRoles;
+import clases.Perfil;
 import clases.Preferencias;
 import clases.Usuario;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,7 +24,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.rowset.serial.SerialBlob;
 import javax.swing.JOptionPane;
+import static sun.security.krb5.Confounder.bytes;
 
 /**
  *
@@ -27,6 +37,7 @@ public class ConexionBD {
     private static Statement Sentencia_SQL;
     private static ResultSet Conj_Registros;
     private static String sentencia;
+    Blob b;
 
     public ConexionBD() {
     }
@@ -79,6 +90,36 @@ public class ConexionBD {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error de Desconexion", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+     public static boolean ascUser(int id) throws SQLException {
+        boolean exito = false;
+        
+                    sentencia = "UPDATE " + ConstantesBD.TUsuarios_Roles + " SET id_rol = " + ConstantesRoles.ROL_ID_ADMIN + " WHERE id_usuario = '" + id + "'";
+                    
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+        
+                
+        
+
+        return exito;
+    }
+     
+    public static boolean DegradarUsuario(int id) throws SQLException {
+        boolean exito = false;
+        
+                    sentencia = "UPDATE " + ConstantesBD.TUsuarios_Roles + " SET id_rol = " + ConstantesRoles.ROL_ID_USER + " WHERE id_usuario = '" + id + "'";
+                    
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+        
+                
+        
+
+        return exito;
+    }
     /**
      *
      * @param email
@@ -119,7 +160,7 @@ public class ConexionBD {
         return exito;
     }
     
-    public static boolean deleteUser(int id) throws SQLException {
+    public static boolean EliminarUsuario(int id) throws SQLException {
         boolean exito = false;
        
                 System.out.println(id);
@@ -131,6 +172,12 @@ public class ConexionBD {
                     }
                     
                     sentencia = "DELETE FROM " + ConstantesBD.TPerfil + " WHERE id_usuario = " + id + "";
+
+                    if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                        exito = true;
+                    }
+                    
+                    sentencia = "DELETE FROM " + ConstantesBD.TPref + " WHERE id_usuario = " + id + "";
 
                     if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                         exito = true;
@@ -232,13 +279,31 @@ public class ConexionBD {
         return exito;
     }
 
-    /*public synchronized static boolean updatePreferences(Preferences prefs) {
+    public synchronized static boolean modificarPreferencias(Preferencias prefs) {
         boolean exito = false;
 
         try {
-            sentencia = "UPDATE " + ConstantesBD.TABLAPREFES + " SET arte = '" + prefs.getArte() + "' SET deporte = '"
-                    + prefs.getDeporte() + "' SET politica = '" + prefs.getPolitica() + "' SET thijos = '" + prefs.istHijos()
-                    + "' SET qhijos = '" + prefs.isqHijos() + "' SET tiporelacion = '" + prefs.getRelacion()+ "' SET interes = '" + prefs.getInteres()+ "'" ;
+            
+            int thijos,qhijos;
+            
+            if(prefs.istHijos()){
+                thijos=1;
+            }
+            else{
+                thijos=0;
+            }
+            
+            if(prefs.isqHijos()){
+                qhijos=1;
+            }
+            else{
+                qhijos=0;
+            }
+            
+            sentencia = "UPDATE " + ConstantesBD.TPref + " SET arte = " + prefs.getArte() + ", deporte = "
+                    + prefs.getDeporte() + ", politica = " + prefs.getPolitica() + ", thijos = " + thijos
+                    + ", qhijos = " + qhijos + ", relaccion = '" + prefs.getRelacion()+ "', interes = '" + prefs.getInteres()+ "' WHERE id_usuario=" +prefs.getId()+"";
+            System.out.println(sentencia);
 
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 exito = true;
@@ -250,6 +315,56 @@ public class ConexionBD {
 
         return exito;
     }
+    
+    public synchronized static boolean modificarPerfil(Perfil p) throws FileNotFoundException {
+        boolean exito = false;
+        Blob imagen;
+        try {
+            Blob b;
+             FileInputStream fis;
+            if(p.getFoto()!=null){
+                byte[] bArray = readFileToByteArray(p.getFoto());
+                 imagen=new SerialBlob(bArray);
+                
+                
+            }
+            else{
+                imagen=null;
+            }
+            
+            
+            System.out.println(p.getId()+" "+p.getLocalidad());
+            
+            sentencia = "UPDATE " + ConstantesBD.TPerfil + " SET usuario = '" + p.getName()+ "', foto = '"
+                    + imagen + "', edad = " + p.getEdad() + ", localidad = '" + p.getLocalidad()
+                    + "' WHERE id_usuario=" +p.getId()+"";
+            System.out.println(sentencia);
+
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                exito = true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return exito;
+    }
+    
+    private static byte[] readFileToByteArray(File file){
+    FileInputStream fis = null;
+    // Creating a byte array using the length of the file
+    // file.length returns long which is cast to int
+    byte[] bArray = new byte[(int) file.length()];
+    try{
+      fis = new FileInputStream(file);
+      fis.read(bArray);
+      fis.close();                   
+    }catch(IOException ioExp){
+      ioExp.printStackTrace();
+    }
+    return bArray;
+  }
 
     /**
      *
@@ -293,6 +408,39 @@ public class ConexionBD {
             ex.printStackTrace();
         }
         return prefs;
+    }
+    
+    public synchronized static Perfil obtenerPerfil(int id) {
+        Perfil p = null;
+        Blob blob;
+        sentencia = "SELECT * FROM " + ConstantesBD.TPerfil + " WHERE id_usuario = " + id + "";
+
+        try {
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                p = new Perfil();
+                p.setId(id);
+                blob=Conj_Registros.getBlob("foto");
+                p.setEdad(Conj_Registros.getInt("edad"));
+                p.setName(Conj_Registros.getString("usuario"));
+                p.setLocalidad(Conj_Registros.getString("Localidad"));
+                if(blob==null){
+                    p.setImagen(null);
+                }
+                else{
+                     p.setImagen(blob.getBytes(1, (int) blob.length()));
+                     System.out.println(p.getImagen());
+                }
+               
+                
+                
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return p;
     }
 
     /**

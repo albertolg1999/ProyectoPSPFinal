@@ -51,4 +51,7 @@ public class CodigosUso {
     public static final short C_Preferencias = 29;
     public static final short C_Preferencias_notiene = 30;
     public static final short C_Preferencias_tiene = 31;
+    
+    public static final short C_obtenerPerfil = 32;
+    public static final short C_actualizarPerfil = 33;
 }

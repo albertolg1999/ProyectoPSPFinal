@@ -12,6 +12,7 @@ import BaseDatos.UsuariosBD;
 import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.ConstantesRoles;
+import clases.Perfil;
 import clases.Preferencias;
 import clases.Seguridad;
 import clases.Usuario;
@@ -99,6 +100,7 @@ public class HiloCliente extends Thread {
                         
                         if(p==null){
                             enviarRespuesta(CodigosUso.C_Preferencias_notiene);
+                            System.out.println("no tiene");
                         }
                         else{
                             enviarRespuesta(CodigosUso.C_Preferencias_tiene);
@@ -118,7 +120,7 @@ public class HiloCliente extends Thread {
 
                     //actualizar preferences
                     case CodigosUso.CODE_PREFERENCES_UPDATE:
-                        //actualizarPreferencias();
+                        modificarPreferencias();
                         break;
                         
                     //seleccionar preferences user
@@ -126,13 +128,23 @@ public class HiloCliente extends Thread {
                         Preferencias pref;
                         Usuario us=recibirUsuario();
                         pref=ConexionBD.obtenerPreferencias(us.getId());
-                        cargarPreferencias(pref);
+                        System.out.println("Envio preferencias");
+                        so = Seguridad.cifrar(clavePubAjena, pref);
+                        Comunicacion.enviarObjeto(cliente, so);
                         break;
                     
-                    case CodigosUso.C_obtenerUsuarios:
+                    //case CodigosUso.C_obtenerUsuarios:
                         
-                        
-                    
+                    case CodigosUso.C_obtenerPerfil:
+                        System.out.println("orden obtener perfil");
+                        if(obtenerPerfil()){
+                            
+                        }
+                        break;
+                    case CodigosUso.C_actualizarPerfil:
+                        System.out.println("mODIFICACN");
+                        modificarPerfil();
+                        break;
                     case CodigosUso.CODE_USER_ADMIN:
                         System.out.println("aqui estoy");
                         ArrayList<Usuario> lista;
@@ -144,14 +156,14 @@ public class HiloCliente extends Thread {
                             do {
                                 try {
 
-                                    //listarUsuarios();
+                                    
                 
                                     System.out.println("ESPERANDO ORDEN");
                                     //recibe orden
                                     so = (SealedObject) Comunicacion.recibirObjeto(cliente);
                                     orden = (short) Seguridad.descifrar(clavePrivPropia, so);
                                     switch (orden) {
-                                         case CodigosUso.CODE_USER_ADMIN:
+                                        case CodigosUso.CODE_USER_ADMIN:
                                             System.out.println("aqui estoy");
                         
                                             lista=ConexionBD.obtenerUsuarios();
@@ -181,12 +193,12 @@ public class HiloCliente extends Thread {
 
                                         case CodigosUso.CODE_CREAR_ADMIN:
                                             System.out.println("ORDEN ASC");
-                                            ascenderUser();
+                                            ascenderUsuario();
                                             break;
 
                                         case CodigosUso.CODE_ELIMINAR_ADMIN:
                                             System.out.println("ORDEN DESC");
-                                            eliminarUsuario();
+                                            DegradarUsuario();
                                             break;
                                     }
                                 } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
@@ -228,7 +240,7 @@ public class HiloCliente extends Thread {
     
     private void eliminarUsuario() throws SQLException{
         Usuario u = recibirUsuario();
-        if (ConexionBD.deleteUser(u.getId())) {
+        if (ConexionBD.EliminarUsuario(u.getId())) {
             enviarRespuesta(CodigosUso.CODE_EXITO_ELIMINAR);
             System.out.println("Eliminado Correctamente");
         }else{
@@ -236,23 +248,26 @@ public class HiloCliente extends Thread {
         }
     }
 
-    private void ascenderUser() {
+    private void ascenderUsuario() throws SQLException {
         Usuario u = recibirUsuario();
-        if (RolesBD.ascUser(u.getId())) {
-            enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
+        System.out.println(u.getId());
+        if (ConexionBD.ascUser(u.getId())) {
+            //sout
+            //enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
             System.out.println("ASC OK");
         }else{
-            enviarRespuesta(CodigosUso.ERROR);
+            //enviarRespuesta(CodigosUso.ERROR);
         }
     }
     
-    private void DegradarUser() {
+    private void DegradarUsuario() throws SQLException {
         Usuario u = recibirUsuario();
-        if (RolesBD.descUser(u.getId())) {
-            enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
-            System.out.println("ASC OK");
+        if (ConexionBD.DegradarUsuario(u.getId())) {
+            //enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
+            System.out.println("Degradado a usuario normal correctamente");
         }else{
-            enviarRespuesta(CodigosUso.ERROR);
+            
+            //enviarRespuesta(CodigosUso.ERROR);
         }
     }
 
@@ -391,6 +406,31 @@ public class HiloCliente extends Thread {
         }
     }
 
+    private boolean obtenerPerfil() {
+        boolean correcto=false;
+        try {
+            
+            //recibe las preferencias del usuario
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            Usuario u = (Usuario) Seguridad.descifrar(clavePrivPropia, so);
+
+            Perfil p=ConexionBD.obtenerPerfil(u.getId());
+            
+            so = Seguridad.cifrar(clavePubAjena, p);
+            Comunicacion.enviarObjeto(cliente, so);
+            
+            System.out.println("perfil enviado");
+            
+            
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println(correcto);
+       return correcto;
+    }
     /**
      *
      */
@@ -431,20 +471,40 @@ public class HiloCliente extends Thread {
         }
     }
 
-    /*private void actualizarPreferencias() {
+    private void modificarPreferencias() {
          try {
             //recibe las preferencias del usuario
             so = (SealedObject) Comunicacion.recibirObjeto(cliente);
-            Preferences prefs = (Preferences) Seguridad.descifrar(clavePrivPropia, so);
+            Preferencias prefs = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
 
             //Introducimos las preferencias en la base de datos
-            if (ConexionBD.updatePreferences(prefs)) {
-                enviarRespuesta(CodeResponse.CODE_PREFERENCES_CORRECTO);
+            if (ConexionBD.modificarPreferencias(prefs)) {
+                enviarRespuesta(CodigosUso.CODE_PREFERENCES_CORRECTO);
             }
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
                 | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
             ex.printStackTrace();
         }
-    }*/
+    }
+    
+    private void modificarPerfil() {
+         try {
+            //recibe las preferencias del usuario
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            Perfil perfil = (Perfil) Seguridad.descifrar(clavePrivPropia, so);
+            
+             System.out.println(perfil.getLocalidad()+" "+perfil.getEdad());
+
+            //Introducimos las preferencias en la base de datos
+            if (ConexionBD.modificarPerfil(perfil)) {
+                System.out.println("Perfil Modificado");
+                //enviarRespuesta(CodigosUso.C);
+            }
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

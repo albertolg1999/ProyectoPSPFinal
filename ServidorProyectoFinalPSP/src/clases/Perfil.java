@@ -5,6 +5,7 @@
  */
 package clases;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 /**
@@ -13,17 +14,58 @@ import java.util.Date;
  */
 public class Perfil implements Serializable{
     private String name;
-    private byte[] foto;
+    private File foto;
+    private byte[] imagen;
+    private int id;
+    
     private int edad;
-    private Date nacimiento;
+    private String contraseña;
+    private String Localidad;
 
-    public Perfil(String name, byte[] foto, int edad, Date nacimiento) {
+    public Perfil(String name,int id, File foto, int edad, String Localidad) {
         this.name = name;
+        this.id=id;
         this.foto = foto;
         this.edad = edad;
-        this.nacimiento = nacimiento;
+        this.Localidad = Localidad;
+    }
+    
+    public Perfil(String name, byte[] imagen, int edad, String Localidad) {
+        this.name = name;
+        this.imagen = imagen;
+        this.edad = edad;
+        this.Localidad = Localidad;
     }
 
+    public Perfil() {
+        
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
+    public File getFoto() {
+        return foto;
+    }
+
+    public void setFoto(File foto) {
+        this.foto = foto;
+    }
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
+    
     public String getName() {
         return name;
     }
@@ -32,13 +74,7 @@ public class Perfil implements Serializable{
         this.name = name;
     }
 
-    public byte[] getFoto() {
-        return foto;
-    }
-
-    public void setFoto(byte[] foto) {
-        this.foto = foto;
-    }
+     
 
     public int getEdad() {
         return edad;
@@ -48,12 +84,12 @@ public class Perfil implements Serializable{
         this.edad = edad;
     }
 
-    public Date getNacimiento() {
-        return nacimiento;
+    public String getLocalidad() {
+        return Localidad;
     }
 
-    public void setNacimiento(Date nacimiento) {
-        this.nacimiento = nacimiento;
+    public void setLocalidad(String Localidad) {
+        this.Localidad = Localidad;
     }
     
     
