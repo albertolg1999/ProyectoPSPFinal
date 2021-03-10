@@ -8,6 +8,7 @@ package BaseDatos;
 import clases.CodigosUso;
 import clases.ConstantesBD;
 import clases.ConstantesRoles;
+import clases.Mensaje;
 import clases.Perfil;
 import clases.Preferencias;
 import clases.Usuario;
@@ -206,6 +207,24 @@ public class ConexionBD {
             
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 System.out.println("Amistad añadida correctamente");
+                
+                exito = true;
+            }
+        
+        
+        return exito;
+    }
+    
+    public synchronized static boolean enviarMensaje(Mensaje m) throws SQLException {
+
+        boolean exito = false;
+
+            sentencia = "INSERT INTO " + ConstantesBD.TMensaje + " ( id_usuario, mensajes, receptor) "
+                    + "values(" + m.getIdUsLog() + ",'" + m.getMensaje()
+                    + "'," + m.getIdUsAmigo() +")";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                System.out.println("mensaje enviado correctamente");
                 
                 exito = true;
             }

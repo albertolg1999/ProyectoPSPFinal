@@ -10,6 +10,7 @@ import BaseDatos.ConexionBD;
 import clases.CodigosUso;
 import clases.Comunicacion;
 import clases.ConstantesRoles;
+import clases.Mensaje;
 import clases.Perfil;
 import clases.Preferencias;
 import clases.Seguridad;
@@ -121,6 +122,12 @@ public class HiloCliente extends Thread {
                      case CodigosUso.C_obtenerAmigos:
                         System.out.println("orden obtener amigos");
                         obtenerAmigos();
+                        
+                        break;
+                    
+                    case CodigosUso.C_enviarMensaje:
+                        System.out.println("orden enviar mensaje");
+                        enviarMensaje();
                         
                         break;
                         
@@ -593,6 +600,28 @@ public class HiloCliente extends Thread {
             int idUsAmigo = (int) Seguridad.descifrar(clavePrivPropia, so);
             
             if(ConexionBD.añadirAmigos(idUsLog,idUsAmigo)){
+                System.out.println("INSERT CORRECT");
+            }
+                        
+            
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void enviarMensaje() throws SQLException {
+         try {
+            //recibe las preferencias del usuario
+            System.out.println("enviado mensaje");
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            Mensaje m = (Mensaje) Seguridad.descifrar(clavePrivPropia, so);
+            
+            if(ConexionBD.enviarMensaje(m)){
                 System.out.println("INSERT CORRECT");
             }
                         

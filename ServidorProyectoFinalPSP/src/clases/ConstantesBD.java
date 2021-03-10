@@ -19,4 +19,5 @@ public class ConstantesBD {
     public static final String TPref = "preferencias";
     public static final String TPerfil = "perfil";
     public static final String TAmigos = "amigos";
+    public static final String TMensaje = "mensajes";
 }
