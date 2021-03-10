@@ -126,10 +126,20 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         btnAscender.setText("Ascender");
         btnAscender.setToolTipText("Añadir Usuario");
         btnAscender.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnAscender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAscenderActionPerformed(evt);
+            }
+        });
 
         btnDegradar.setText("Degradar");
         btnDegradar.setToolTipText("Añadir Usuario");
         btnDegradar.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnDegradar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDegradarActionPerformed(evt);
+            }
+        });
 
         btnModificar.setText("Modificar");
         btnModificar.setToolTipText("Añadir Usuario");
@@ -280,6 +290,74 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnAscenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAscenderActionPerformed
+       try {
+            enviarRespuesta(CodigosUso.CODE_CREAR_ADMIN);
+            
+            Usuario us=new Usuario();
+            int row=tabla.getSelectedRow();
+            
+            us=res.get(row);
+            System.out.println(us.getName());
+            so = Seguridad.cifrar(clavePubAjena, us);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            //short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+            //System.out.println(orden);
+            
+            
+            
+            this.res=obtenerUsuarios();
+            
+            cargarTablaUsuarios(res);
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAscenderActionPerformed
+
+    private void btnDegradarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDegradarActionPerformed
+        try {
+            enviarRespuesta(CodigosUso.CODE_ELIMINAR_ADMIN);
+            
+            Usuario us=new Usuario();
+            int row=tabla.getSelectedRow();
+            
+            us=res.get(row);
+            System.out.println(us.getName());
+            so = Seguridad.cifrar(clavePubAjena, us);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            //short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+            //System.out.println(orden);
+            
+            
+            
+            this.res=obtenerUsuarios();
+            
+            cargarTablaUsuarios(res);
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnDegradarActionPerformed
 
     
     
