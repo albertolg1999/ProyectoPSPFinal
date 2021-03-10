@@ -57,4 +57,5 @@ public class CodigosUso {
     public static final short C_actualizarPerfil = 33;
     
     public static final short C_obtenerAfines = 34;
+    public static final short C_añadirAmigos = 35;
 }

@@ -141,7 +141,6 @@ public class IniciarSesion extends javax.swing.JFrame {
         txtUsuario.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
 
         pswPassword.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        pswPassword.setText("jPasswordField1");
 
         limagen.setToolTipText("");
 

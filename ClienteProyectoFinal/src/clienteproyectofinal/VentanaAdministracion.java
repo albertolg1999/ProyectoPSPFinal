@@ -75,8 +75,6 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         btnDegradar = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},

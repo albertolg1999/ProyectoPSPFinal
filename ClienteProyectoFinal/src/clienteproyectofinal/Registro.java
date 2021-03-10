@@ -93,7 +93,6 @@ public class Registro extends javax.swing.JFrame {
         });
 
         pswPassword.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        pswPassword.setText("jPasswordField1");
 
         txtEmail.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
 
@@ -101,7 +100,6 @@ public class Registro extends javax.swing.JFrame {
         jLabel3.setText("Email:");
 
         pswConfPassword.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        pswConfPassword.setText("jPasswordField1");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel5.setText("REGISTRO");

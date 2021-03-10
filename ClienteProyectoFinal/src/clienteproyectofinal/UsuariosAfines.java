@@ -5,12 +5,22 @@
  */
 package clienteproyectofinal;
 
+import clases.CodigosUso;
+import clases.Comunicacion;
 import clases.Perfil;
+import clases.Seguridad;
 import clases.Usuario;
+import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -60,8 +70,6 @@ public class UsuariosAfines extends javax.swing.JFrame {
         tabla = new javax.swing.JTable();
         btnMeGusta = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -106,14 +114,47 @@ public class UsuariosAfines extends javax.swing.JFrame {
 
     private void btnMeGustaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMeGustaActionPerformed
         if(tabla.getSelectedRow()!=-1){
-            
+            try {
+                enviarRespuesta(CodigosUso.C_añadirAmigos);
+                
+                Perfil us=new Perfil();
+                int row=tabla.getSelectedRow();
+                
+                us=res.get(row);
+                System.out.println(us.getName());
+                so = Seguridad.cifrar(clavePubAjena, us.getId());
+                Comunicacion.enviarObjeto(servidor, so);
+                
+                
+                so = Seguridad.cifrar(clavePubAjena, this.u.getId());
+                Comunicacion.enviarObjeto(servidor, so);
+                
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(UsuariosAfines.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchPaddingException ex) {
+                Logger.getLogger(UsuariosAfines.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidKeyException ex) {
+                Logger.getLogger(UsuariosAfines.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(UsuariosAfines.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalBlockSizeException ex) {
+                Logger.getLogger(UsuariosAfines.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        
         else{
             JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
         }
     }//GEN-LAST:event_btnMeGustaActionPerformed
 
+    
+    private void enviarRespuesta(short res) {
+        try {
+            so = Seguridad.cifrar(clavePubAjena, res);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+        }
+    }
+    
     protected void cargarTablaUsuarios( ArrayList<Perfil> res){
         tablalist=new DefaultTableModel();
         tablalist.addColumn("Usuario");
