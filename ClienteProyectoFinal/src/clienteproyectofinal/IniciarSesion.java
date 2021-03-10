@@ -223,21 +223,20 @@ public class IniciarSesion extends javax.swing.JFrame {
        if (!txtUsuario.getText().isEmpty() && pswPassword.getPassword().length != 0) {
 
             try {
-                //envio de modo LOGIN al hilo que escucha en el servidor
                 enviarRespuesta(CodigosUso.LOGIN);
                 
                 System.out.println("Escuchando login");
-                //Creamos al usuario con el constructor del login, lo ciframos y lo enviamos
+                
                 String pwd = resumirPwd();
                 Usuario u = new Usuario(txtUsuario.getText(), pwd);
                 so = Seguridad.cifrar(clavePubAjena, u);
                 Comunicacion.enviarObjeto(servidor, so);
                 System.out.println("Usuario enviado " + u.getEmail());
 
-                //recibimos la respuesta en base al resultado de nuestra petición
+                
                 so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                 short res = (short) Seguridad.descifrar(clavePrivPropia, so);
-                System.out.println("Rspuesta Servidor " + res);
+                System.out.println("Respuesta del Servidor " + res);
 
                 ComprobarUsuarioExiste(res);
 

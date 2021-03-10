@@ -66,15 +66,19 @@ public class VentanaPerfil extends javax.swing.JFrame {
         txtLocalidad.setText(p.getLocalidad());
         
         if(p.getImagen()!=null){
-            BufferedImage img=null;
+            ImageIcon image;
+            ByteArrayInputStream bis = new ByteArrayInputStream(p.getImagen());
+            BufferedImage imagen;
             
-            img=ImageIO.read(new ByteArrayInputStream(p.getImagen()));
+                imagen = ImageIO.read(bis);
+                System.out.println(imagen);
+                Icon icono=new ImageIcon(imagen.getScaledInstance(lFoto.getWidth(), lFoto.getHeight(), Image.SCALE_DEFAULT));
+                lFoto.setIcon(icono);
+         
             
-            ImageIcon ic=new ImageIcon(img);
-            Icon icono=new ImageIcon(ic.getImage().getScaledInstance(lFoto.getWidth(), lFoto.getHeight(), Image.SCALE_DEFAULT));
             
             
-            lFoto.setIcon(icono);
+            
         }
     }
 
@@ -219,7 +223,7 @@ public class VentanaPerfil extends javax.swing.JFrame {
             perf.setName(txtUsuario.getText());
             perf.setLocalidad(txtLocalidad.getText());
             perf.setEdad(Integer.parseInt(txtEdad.getText()));
-            so = Seguridad.cifrar(clavePubAjena, p);
+            so = Seguridad.cifrar(clavePubAjena, perf);
             Comunicacion.enviarObjeto(servidor, so);
             
             System.out.println("aqui estoy perfil enviado"+ perf.getLocalidad());
