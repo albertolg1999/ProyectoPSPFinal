@@ -42,6 +42,17 @@ public class Usuario implements Serializable{
         this.email = email;
         this.pwd = pwdR;
     }
+    
+    /**
+     *
+     * @param email
+     * @param name
+     */
+    public Usuario(String email, String name,int id) {
+        this.email = email;
+        this.name = name;
+        this.id=id;
+    }
 
     public String getRol() {
         return rol;

@@ -92,7 +92,7 @@ public class ConexionBD {
         }
     }
     
-     public static boolean ascUser(int id) throws SQLException {
+     public static boolean ascenderUsuario(int id) throws SQLException {
         boolean exito = false;
         
                     sentencia = "UPDATE " + ConstantesBD.TUsuarios_Roles + " SET id_rol = " + ConstantesRoles.ROL_ID_ADMIN + " WHERE id_usuario = '" + id + "'";
@@ -116,8 +116,6 @@ public class ConexionBD {
                         exito = true;
                     }
         
-                
-        
 
         return exito;
     }
@@ -126,7 +124,7 @@ public class ConexionBD {
      * @param email
      * @return
      */
-    private static boolean usuarioExists(String email) {
+    private static boolean usuarioExiste(String email) {
         boolean exist = false;
 
         sentencia = "SELECT * FROM " + ConstantesBD.TUsuarios + " WHERE email = '" + email + "'";
@@ -142,11 +140,8 @@ public class ConexionBD {
         return exist;
     }
 
-    public static boolean activarUser(int id) {
+    public static boolean activarUsuario(int id) {
         boolean exito = false;
-        
-
-        
         try{
             
             sentencia = "UPDATE " + ConstantesBD.TUsuarios + " SET activado = 1 WHERE id_usuario = '" + id + "'";
@@ -204,7 +199,7 @@ public class ConexionBD {
 
         boolean exito = false;
 
-        if (!usuarioExists(u.getEmail())) {
+        if (!usuarioExiste(u.getEmail())) {
             sentencia = "INSERT INTO " + ConstantesBD.TUsuarios + " ( Usuario, Email, Password,Activado) "
                     + "values('" + u.getName() + "','" + u.getEmail()
                     + "','" + u.getPwd() + "',"+0+")";
@@ -238,6 +233,25 @@ public class ConexionBD {
         }
         }
         return exito;
+    }
+    
+    public synchronized static boolean modificarUsuario(Usuario u) throws SQLException {
+
+        boolean exito = false;
+
+        if (!usuarioExiste(u.getEmail())) {
+            System.out.println(u.getName());
+            sentencia = "UPDATE " + ConstantesBD.TUsuarios + " SET usuario = '" + u.getName()+ "', email = '"
+                    + u.getEmail() + "' WHERE id_usuario=" +u.getId()+"";
+            
+            if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
+                System.out.println("USUARIO Actualizado");
+                
+                exito = true;
+            }
+        }
+        
+         return exito;
     }
 
     
@@ -412,6 +426,47 @@ public class ConexionBD {
         return prefs;
     }
     
+    public synchronized static ArrayList<Perfil> obtenerAfines(Preferencias pref) {
+        ArrayList<Perfil> listaAfines =new ArrayList<Perfil>();
+        Perfil p;
+        int thijos,qhijos;
+            
+            if(pref.istHijos()){
+                thijos=1;
+            }
+            else{
+                thijos=0;
+            }
+            
+            if(pref.isqHijos()){
+                qhijos=1;
+            }
+            else{
+                qhijos=0;
+            }
+        sentencia = "SELECT * FROM " + ConstantesBD.TPerfil + " WHERE  id_usuario=(Select id_usuario from"+ConstantesBD.TPref+" WHERE relaccion='"+pref.getRelacion()+"', interes='"+pref.getInteres()+"', arte>="+pref.getArte()+", deporte>="+pref.getDeporte()+", politica>="+pref.getPolitica()+", thijos="+thijos+", qhijos="+qhijos+")";
+
+        try {
+            Conj_Registros = Sentencia_SQL.executeQuery(sentencia);
+
+            while (Conj_Registros.next()) {
+                p = new Perfil();
+                p.setId(Conj_Registros.getInt("id_usuario"));
+                p.setName(Conj_Registros.getString("usuario"));
+                p.setLocalidad(Conj_Registros.getString("localidad"));
+                p.setName(Conj_Registros.getString("usuario"));
+                p.setSexo(Conj_Registros.getString("sexo"));
+                
+                listaAfines.add(p);
+                
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listaAfines;
+    }
+    
     public synchronized static Perfil obtenerPerfil(int id) {
         Perfil p = null;
         Blob blob;
@@ -509,7 +564,7 @@ public class ConexionBD {
      * @param u
      * @return
      */
-    public synchronized static boolean isActivatedUser(Usuario u) {
+    public synchronized static boolean UsuarioActivado(Usuario u) {
         boolean activado = false;
         sentencia = "SELECT activado FROM " + ConstantesBD.TUsuarios + " where id_usuario = '" + u.getId() + "'";
 
@@ -577,7 +632,7 @@ public class ConexionBD {
      * @param id
      * @return
      */
-    private static int selectIdRol(int id) {
+    private static int IdRol(int id) {
         int idRol =0 ;
         try {
             sentencia = "SELECT id_rol FROM " + ConstantesBD.TUsuarios_Roles + " WHERE id_usuario =" + id + "";
@@ -598,10 +653,10 @@ public class ConexionBD {
      * @param idUser
      * @return
      */
-    public synchronized static String selectTypeUser(int idUsuario) {
+    public synchronized static String TipoUsuario(int idUsuario) {
 
         String tipoUser = "";
-        int idRol = selectIdRol(idUsuario);
+        int idRol = IdRol(idUsuario);
 
         try {
             sentencia = "SELECT roll FROM " + ConstantesBD.TRoles + " WHERE id_rol = " + idRol + "";

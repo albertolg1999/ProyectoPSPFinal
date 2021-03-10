@@ -6,8 +6,6 @@
 package hilos;
 
 import BaseDatos.ConexionBD;
-import BaseDatos.RolesBD;
-import BaseDatos.UsuariosBD;
 //import static BaseDatos.ConexionBD.abrirConexion;
 import clases.CodigosUso;
 import clases.Comunicacion;
@@ -74,16 +72,16 @@ public class HiloCliente extends Thread {
                 //recibe orden
                 so = (SealedObject) Comunicacion.recibirObjeto(cliente);
                 short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
-                System.out.println(orden);
+                System.out.println(orden +" N");
                 switch (orden) {
                     //registrar un usuario
-                    case CodigosUso.SIGN_UP:
+                    case CodigosUso.Registro:
                         System.out.println("ORDEN REGISTRO");
                         if (registrarUsuario()) {
                             
-                            enviarRespuesta(CodigosUso.CODE_SIGNUP_CORRECTO);
+                            enviarRespuesta(CodigosUso.C_Registro_CORRECTO);
                         } else {
-                            enviarRespuesta(CodigosUso.CODE_SIGNUP_EMAIL);
+                            enviarRespuesta(CodigosUso.C_SIGNUP_EMAIL);
                         }
                         break;
 
@@ -106,25 +104,32 @@ public class HiloCliente extends Thread {
                             enviarRespuesta(CodigosUso.C_Preferencias_tiene);
                         }
                         break;
+                        
+                    case CodigosUso.C_obtenerAfines:
+                        System.out.println("enviado");
+                        buscarAfines();
+                        System.out.println("enviado");
+                        System.out.println("");
+                        break;
 
-                    //crear preferences
-                    case CodigosUso.CODE_PREFERENCES_CREATE:
+                    //crear preferencias
+                    case CodigosUso.C_Preferencias_CREATE:
                         System.out.println("ORDEN PREFS");
                         
                         boolean correcto=crearPreferencias();
                         if(correcto){
-                            enviarRespuesta(CodigosUso.CODE_PREFERENCES_CORRECTO);
+                            enviarRespuesta(CodigosUso.C_Preferencias_CORRECTO);
                             System.out.println("respuesta enviada");
                         }
                         break;
 
-                    //actualizar preferences
-                    case CodigosUso.CODE_PREFERENCES_UPDATE:
+                    //actualizar preferenciass
+                    case CodigosUso.C_Preferencias_UPDATE:
                         modificarPreferencias();
                         break;
                         
-                    //seleccionar preferences user
-                    case CodigosUso.CODE_PREFERENCES_SELECT:
+                    //seleccionamos las preferencias del usuario
+                    case CodigosUso.C_Preferencias_SELECT:
                         Preferencias pref;
                         Usuario us=recibirUsuario();
                         pref=ConexionBD.obtenerPreferencias(us.getId());
@@ -133,7 +138,7 @@ public class HiloCliente extends Thread {
                         Comunicacion.enviarObjeto(cliente, so);
                         break;
                     
-                    //case CodigosUso.C_obtenerUsuarios:
+                    
                         
                     case CodigosUso.C_obtenerPerfil:
                         System.out.println("orden obtener perfil");
@@ -154,10 +159,7 @@ public class HiloCliente extends Thread {
                         Comunicacion.enviarObjeto(cliente, so);
                         
                             do {
-                                try {
-
-                                    
-                
+                                try {                
                                     System.out.println("ESPERANDO ORDEN");
                                     //recibe orden
                                     so = (SealedObject) Comunicacion.recibirObjeto(cliente);
@@ -171,32 +173,44 @@ public class HiloCliente extends Thread {
                                             so = Seguridad.cifrar(clavePubAjena, lista);
                                             Comunicacion.enviarObjeto(cliente, so);
                                             break;
-                                        case CodigosUso.CODE_ACTIVAR_USER:
+                                        case CodigosUso.C_activarUsuario:
                                             System.out.println("ORDEN ACTIVAR");
                                             activarUsuario();
                                             break;
 
-                                        case CodigosUso.CODE_ELIMINAR_USER:
+                                        case CodigosUso.C_eliminarUsuario:
                                             System.out.println("ORDEN ELIMINAR");
                                             eliminarUsuario();
                                             break;
 
-                                        case CodigosUso.CODE_CREAR_USER:
+                                        
+                                        case CodigosUso.C_crearUsuario:
                                             System.out.println("ORDEN CREAR");
                                             if (registrarUsuario()) {
-                                                enviarRespuesta(CodigosUso.CODE_SIGNUP_CORRECTO);
+                                                enviarRespuesta(CodigosUso.C_Registro_CORRECTO);
                                                 System.out.println("Registrado");
                                             } else {
-                                                enviarRespuesta(CodigosUso.CODE_SIGNUP_EMAIL);
+                                                enviarRespuesta(CodigosUso.C_SIGNUP_EMAIL);
                                             }
                                             break;
 
-                                        case CodigosUso.CODE_CREAR_ADMIN:
+                                        case CodigosUso.C_modificarUsuario:
+                                            System.out.println("ORDEN modificar");
+                                            if (modificarUsuario()) {
+                                                
+                                                enviarRespuesta(CodigosUso.C_Registro_CORRECTO);
+                                                System.out.println("Modificado");
+                                            } else {
+                                                //enviarRespuesta(CodigosUso.C_SIGNUP_EMAIL);
+                                            }
+                                            break;
+                                            
+                                        case CodigosUso.C_crearAdmin:
                                             System.out.println("ORDEN ASC");
                                             ascenderUsuario();
                                             break;
 
-                                        case CodigosUso.CODE_ELIMINAR_ADMIN:
+                                        case CodigosUso.C_eliminarAdmin:
                                             System.out.println("ORDEN DESC");
                                             DegradarUsuario();
                                             break;
@@ -228,7 +242,7 @@ public class HiloCliente extends Thread {
     
     private void activarUsuario(){
         Usuario u = recibirUsuario();
-        if (ConexionBD.activarUser(u.getId())) {
+        if (ConexionBD.activarUsuario(u.getId())) {
             enviarRespuesta(CodigosUso.CODE_EXITO_ACTIVAR);
             System.out.println("AC OK");
         }else{
@@ -249,7 +263,7 @@ public class HiloCliente extends Thread {
     private void ascenderUsuario() throws SQLException {
         Usuario u = recibirUsuario();
         System.out.println(u.getId());
-        if (ConexionBD.ascUser(u.getId())) {
+        if (ConexionBD.ascenderUsuario(u.getId())) {
             //sout
             enviarRespuesta((short)100);
             System.out.println("ASC OK");
@@ -291,6 +305,18 @@ public class HiloCliente extends Thread {
         Usuario u = recibirUsuario();
         System.out.println("RECIBIDO USUARIO OK " + u.getEmail()+" "+u.getPwd());
         return ConexionBD.registrarUsuario(u);
+    }
+    
+    
+    /**
+     *
+     * @return @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private boolean modificarUsuario() throws IOException, ClassNotFoundException, SQLException {
+        Usuario u = recibirUsuario();
+        System.out.println("RECIBIDO USUARIO OK " + u.getEmail()+" "+u.getName());
+        return ConexionBD.modificarUsuario(u);
     }
 
     /**
@@ -337,7 +363,7 @@ public class HiloCliente extends Thread {
         if (ComprobarLoginExiste(u.getEmail(), u.getPwd())) {
             try {
                 //Enviamos el codigo de que el usuario existe en la base de datos
-                enviarRespuesta(CodigosUso.CODE_USER_EXISTS);
+                enviarRespuesta(CodigosUso.C_UsuarioExistente);
                 int id=ConexionBD.obtenerIdUsuario(userLogueado);
                 
                 userLogueado.setId(id);
@@ -362,13 +388,13 @@ public class HiloCliente extends Thread {
      *
      */
     private void ComprobarUsuarioActivado() {
-        if (ConexionBD.isActivatedUser(userLogueado)) {
+        if (ConexionBD.UsuarioActivado(userLogueado)) {
             System.out.println("hh");
             //enviarRespuesta(CodigosUso.LOGIN_CORRECTO);
             ComprobarTipoUsuario();
             //checkPrefsUser();
         } else {
-            enviarRespuesta(CodigosUso.CODE_USER_NOT_ACTIVATED);
+            enviarRespuesta(CodigosUso.C_UsuarioInactivo);
         }
     }
 
@@ -390,7 +416,7 @@ public class HiloCliente extends Thread {
      *
      */
     private void ComprobarTipoUsuario() {
-        String rol = ConexionBD.selectTypeUser(userLogueado.getId());
+        String rol = ConexionBD.TipoUsuario(userLogueado.getId());
 
         System.out.println(rol);
         switch (rol) {
@@ -478,7 +504,7 @@ public class HiloCliente extends Thread {
 
             //Introducimos las preferencias en la base de datos
             if (ConexionBD.modificarPreferencias(prefs)) {
-                enviarRespuesta(CodigosUso.CODE_PREFERENCES_CORRECTO);
+                enviarRespuesta(CodigosUso.C_Preferencias_CORRECTO);
             }
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
@@ -486,6 +512,32 @@ public class HiloCliente extends Thread {
             ex.printStackTrace();
         }
     }
+    
+    private void buscarAfines() {
+         try {
+            //recibe las preferencias del usuario
+            System.out.println("enviado");
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(cliente);
+            Preferencias prefs = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
+             System.out.println(prefs);
+            
+            ArrayList<Perfil> lista;
+            lista=ConexionBD.obtenerAfines(prefs);
+                        
+            so = Seguridad.cifrar(clavePubAjena, lista);
+            Comunicacion.enviarObjeto(cliente, so);
+             System.out.println("enviado");
+            //Introducimos las preferencias en la base de datos
+            
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
+                | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     
     private void modificarPerfil() {
          try {
