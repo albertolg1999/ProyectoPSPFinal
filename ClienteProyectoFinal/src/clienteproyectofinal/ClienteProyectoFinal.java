@@ -5,6 +5,9 @@
  */
 package clienteproyectofinal;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 /**
  *
  * @author disen
@@ -14,8 +17,9 @@ public class ClienteProyectoFinal {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        System.out.println("hola mundo");
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException, ClassNotFoundException {
+        IniciarSesion i=new IniciarSesion();
+        i.show();
     }
     
 }
