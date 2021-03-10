@@ -403,7 +403,34 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAfinesActionPerformed
 
     private void btnAmigosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAmigosActionPerformed
-        // TODO add your handling code here:
+        try {
+            
+            enviarRespuesta(CodigosUso.C_obtenerAmigos);
+            
+            so = Seguridad.cifrar(clavePubAjena, this.u.getId());
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            
+            ArrayList<Perfil> res = (ArrayList<Perfil>) Seguridad.descifrar(clavePrivPropia, so);
+            Amigos a=new Amigos(u,res,servidor,clavePrivPropia,clavePubAjena);
+            a.show();
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAmigosActionPerformed
 
     
