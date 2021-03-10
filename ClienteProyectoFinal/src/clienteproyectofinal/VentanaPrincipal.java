@@ -8,6 +8,7 @@ package clienteproyectofinal;
 import RSMaterialComponent.RSTableMetroCustom;
 import clases.CodigosUso;
 import clases.Comunicacion;
+import clases.Perfil;
 import clases.Preferencias;
 import clases.Seguridad;
 import clases.Usuario;
@@ -77,6 +78,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             btnPerfil.setVisible(true);
             btnPreferencias.setVisible(true);
             btnMensajes.setVisible(true);
+            System.out.println();
         }
     }
     public VentanaPrincipal() {
@@ -227,7 +229,42 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAdministrarActionPerformed
 
     private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
-        // TODO add your handling code here:
+        try {
+            
+            enviarRespuesta(CodigosUso.C_obtenerPerfil);
+            
+            so = Seguridad.cifrar(clavePubAjena, u);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            System.out.println("aqui estoy");
+            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            //Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            Perfil p = (Perfil) Seguridad.descifrar(clavePrivPropia, so);
+            
+            
+            VentanaPerfil vpl=new VentanaPerfil(p,servidor,clavePrivPropia,clavePubAjena);
+            vpl.show();
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
     }//GEN-LAST:event_btnPerfilActionPerformed
 
     private void btnPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreferenciasActionPerformed
@@ -238,11 +275,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             so = Seguridad.cifrar(clavePubAjena, u);
             Comunicacion.enviarObjeto(servidor, so);
             
+            System.out.println("aqui estoy");
+            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            //Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
             
             so = (SealedObject) Comunicacion.recibirObjeto(servidor);
             Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
             
-            VentanaPreferencias vpf=new VentanaPreferencias(p);
+            
+            
+            VentanaPreferencias vpf=new VentanaPreferencias(u,p,"actualizar",servidor, clavePrivPropia, clavePubAjena);
             vpf.show();
             
         } catch (IOException ex) {

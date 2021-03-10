@@ -22,6 +22,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -53,9 +54,14 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         this.modo=modo;
     }
 
-    public VentanaPreferencias(Preferencias p) {
+    public VentanaPreferencias(Usuario u,Preferencias p,String modo,Socket servidor, PrivateKey priv, PublicKey pubAjena) {
         initComponents();
+        this.u=u;
         this.p=p;
+        this.modo=modo;
+        this.servidor = servidor;
+        this.clavePrivPropia = priv;
+        this.clavePubAjena = pubAjena;
         CargarPreferencias(this.p);
     }
 
@@ -400,13 +406,13 @@ public class VentanaPreferencias extends javax.swing.JFrame {
             
                 so = Seguridad.cifrar(clavePubAjena, p);
                 Comunicacion.enviarObjeto(servidor, so);
-            
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+                
                 so = (SealedObject) Comunicacion.recibirObjeto(servidor);
                 short orden2 = (short) Seguridad.descifrar(clavePrivPropia, so);
-                if(orden2==CodigosUso.C_Preferencias_notiene){
-                    System.out.println(orden2);
-                
-                
+                if(orden2==CodigosUso.CODE_PREFERENCES_CORRECTO){
+                    
                     VentanaPrincipal vp=new VentanaPrincipal(u,false,servidor,clavePrivPropia,clavePubAjena);
                     vp.show();
                 
@@ -419,6 +425,14 @@ public class VentanaPreferencias extends javax.swing.JFrame {
             
                 so = Seguridad.cifrar(clavePubAjena, p);
                 Comunicacion.enviarObjeto(servidor, so);
+                
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden2 = (short) Seguridad.descifrar(clavePrivPropia, so);
+                if(orden2==CodigosUso.CODE_PREFERENCES_CORRECTO){
+                    
+                    JOptionPane.showMessageDialog(null, "Preferencias modificadas correctamente");
+                    this.hide();
+                } 
             }
             
             
