@@ -245,11 +245,7 @@ public class IniciarSesion extends javax.swing.JFrame {
             }
 
         } else {
-            if (txtUsuario.getText().isEmpty()) {
-                //lblError_User.setVisible(true);
-            } else {
-                //lblError_Pwd.setVisible(true);
-            }
+            JOptionPane.showMessageDialog(null, "Debe Rellenar todos los campos");
         }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
@@ -330,6 +326,12 @@ public class IniciarSesion extends javax.swing.JFrame {
                 //iniciamos menu principal en modo usuario
                 //initMainView(false);
             break;
+            case CodigosUso.CODE_USER_ADMIN:
+                JOptionPane.showMessageDialog(null, "Bienvenido es usted admin");
+                //iniciamos menu principal en modo admin
+                IniciarVentanaPrincipal(true);
+                //initMainView(true);
+                break;
             case CodigosUso.CODE_USER_USER:
                 
                 try {
@@ -342,12 +344,13 @@ public class IniciarSesion extends javax.swing.JFrame {
                     System.out.println(userLog.getId());
                     if(code==CodigosUso.C_Preferencias_notiene){
                         System.out.println("no tiene preferencias en la BD");
-                        
+                        JOptionPane.showMessageDialog(null, "Bienvenido, antes de entrar a la ventana principal necesita rellenar sus preferencias");
                         VentanaPreferencias pf=new VentanaPreferencias(userLog,servidor, clavePrivPropia, clavePubAjena,"crear");
                         pf.show();
                         this.hide();
                     }
                     else{
+                        JOptionPane.showMessageDialog(null, "Bienvenido");
                         VentanaPrincipal vp=new VentanaPrincipal(userLog,false,servidor,clavePrivPropia,clavePubAjena);
                         vp.show();
                         
@@ -364,11 +367,7 @@ public class IniciarSesion extends javax.swing.JFrame {
                 //IniciarVentanaPrincipal(false);
                 break;
 
-            case CodigosUso.CODE_USER_ADMIN:
-                //iniciamos menu principal en modo admin
-                IniciarVentanaPrincipal(true);
-                //initMainView(true);
-                break;
+            
         }
     }
     

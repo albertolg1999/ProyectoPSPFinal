@@ -95,16 +95,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        imagen = new javax.swing.JLabel();
         btnPerfil = new javax.swing.JButton();
         btnPreferencias = new javax.swing.JButton();
         btnMensajes = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         btnAdministrar = new javax.swing.JButton();
+        btnAfines = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        btnAmigos = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
-
-        imagen.setText("jLabel1");
 
         btnPerfil.setText("Mi Perfil");
         btnPerfil.addActionListener(new java.awt.event.ActionListener() {
@@ -141,6 +141,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnAfines.setText("Usuarios Afines");
+        btnAfines.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAfinesActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setText("Tareas Disponibles:");
+
+        btnAmigos.setText("Mis Amigos");
+        btnAmigos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAmigosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -154,18 +171,20 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                             .addComponent(btnMensajes, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnPreferencias, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAdministrar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnAdministrar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAfines, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAmigos, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(173, 173, 173)
-                        .addComponent(imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(146, Short.MAX_VALUE))
+                        .addGap(129, 129, 129)
+                        .addComponent(jLabel1)))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(102, 102, 102)
+                .addComponent(jLabel1)
+                .addGap(75, 75, 75)
                 .addComponent(btnAdministrar)
                 .addGap(5, 5, 5)
                 .addComponent(btnPerfil)
@@ -173,9 +192,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addComponent(btnPreferencias)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMensajes)
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAfines)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAmigos)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                 .addComponent(btnSalir)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -304,6 +327,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnPreferenciasActionPerformed
 
+    private void btnAfinesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfinesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAfinesActionPerformed
+
+    private void btnAmigosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAmigosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAmigosActionPerformed
+
     
     private void enviarRespuesta(short res) {
         try {
@@ -349,11 +380,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdministrar;
+    private javax.swing.JButton btnAfines;
+    private javax.swing.JButton btnAmigos;
     private javax.swing.JButton btnMensajes;
     private javax.swing.JButton btnPerfil;
     private javax.swing.JButton btnPreferencias;
     private javax.swing.JButton btnSalir;
-    private javax.swing.JLabel imagen;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

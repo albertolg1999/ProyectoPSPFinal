@@ -22,6 +22,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -49,8 +50,8 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         cargarTablaUsuarios(res);
     }
 
-    private VentanaAdministracion() {
-        
+    public VentanaAdministracion() {
+        initComponents();
     }
 
     /**
@@ -104,6 +105,11 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         btnAñadir.setText("Añadir");
         btnAñadir.setToolTipText("Añadir Usuario");
         btnAñadir.setMaximumSize(new java.awt.Dimension(50, 50));
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAñadirActionPerformed(evt);
+            }
+        });
 
         btnActivar.setText("Activar");
         btnActivar.setToolTipText("Añadir Usuario");
@@ -226,6 +232,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             
             if(orden!=0){
                 System.out.println("Activado");
+                JOptionPane.showMessageDialog(null, "Usuario activado correctamente");
             }
             
             this.res=obtenerUsuarios();
@@ -267,6 +274,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             
             if(orden!=0){
                 System.out.println("Eliminado");
+                JOptionPane.showMessageDialog(null, "Usuario eliminado correctamente");
             }
             
             this.res=obtenerUsuarios();
@@ -293,25 +301,40 @@ public class VentanaAdministracion extends javax.swing.JFrame {
 
     private void btnAscenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAscenderActionPerformed
        try {
-            enviarRespuesta(CodigosUso.CODE_CREAR_ADMIN);
+           if(tabla.getSelectedRow()!=-1){
+               
+               enviarRespuesta(CodigosUso.CODE_CREAR_ADMIN);
             
-            Usuario us=new Usuario();
-            int row=tabla.getSelectedRow();
+                Usuario us=new Usuario();
+                int row=tabla.getSelectedRow();
+
+                us=res.get(row);
+                System.out.println(us.getName());
+                so = Seguridad.cifrar(clavePubAjena, us);
+                Comunicacion.enviarObjeto(servidor, so);
+
+                so= (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+
+
+                if(orden==100){
+                    JOptionPane.showMessageDialog(null, "Usuario ascendido correctamente");
+                }
+
+
+
+
+
+
+                this.res=obtenerUsuarios();
+
+                cargarTablaUsuarios(res);
+           }
+            else{
+                JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
+            }
+           
             
-            us=res.get(row);
-            System.out.println(us.getName());
-            so = Seguridad.cifrar(clavePubAjena, us);
-            Comunicacion.enviarObjeto(servidor, so);
-            
-            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-            //short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
-            //System.out.println(orden);
-            
-            
-            
-            this.res=obtenerUsuarios();
-            
-            cargarTablaUsuarios(res);
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
@@ -322,30 +345,51 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAscenderActionPerformed
 
     private void btnDegradarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDegradarActionPerformed
         try {
-            enviarRespuesta(CodigosUso.CODE_ELIMINAR_ADMIN);
             
-            Usuario us=new Usuario();
-            int row=tabla.getSelectedRow();
+            if(tabla.getSelectedRow()!=-1){
+                enviarRespuesta(CodigosUso.CODE_ELIMINAR_ADMIN);
             
-            us=res.get(row);
-            System.out.println(us.getName());
-            so = Seguridad.cifrar(clavePubAjena, us);
-            Comunicacion.enviarObjeto(servidor, so);
+                Usuario us=new Usuario();
+                int row=tabla.getSelectedRow();
+
+                us=res.get(row);
+                System.out.println(us.getName());
+                so = Seguridad.cifrar(clavePubAjena, us);
+                Comunicacion.enviarObjeto(servidor, so);
+
+
+                so= (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+
+
+                if(orden==100){
+                    JOptionPane.showMessageDialog(null, "Usuario degradado correctamente");
+                }
+                //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                //short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+                //System.out.println(orden);
+
+
+
+                this.res=obtenerUsuarios();
+                
+                cargarTablaUsuarios(res);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Selecciona primero un usuario");
+            }
             
-            //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-            //short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
-            //System.out.println(orden);
             
             
-            
-            this.res=obtenerUsuarios();
-            
-            cargarTablaUsuarios(res);
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
@@ -356,8 +400,17 @@ public class VentanaAdministracion extends javax.swing.JFrame {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaAdministracion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnDegradarActionPerformed
+
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        VentanaUsuario vu=new VentanaUsuario(servidor,clavePrivPropia,clavePubAjena,"nuevo",this);
+        vu.show();
+    }//GEN-LAST:event_btnAñadirActionPerformed
 
     
     
@@ -369,7 +422,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         }
     }
     
-    private void cargarTablaUsuarios( ArrayList<Usuario> res){
+    protected void cargarTablaUsuarios( ArrayList<Usuario> res){
         tablalist=new DefaultTableModel();
         tablalist.addColumn("Usuario");
         tablalist.addColumn("Email");
@@ -387,7 +440,7 @@ public class VentanaAdministracion extends javax.swing.JFrame {
         tabla.setModel(tablalist);
     }
     
-    private ArrayList<Usuario> obtenerUsuarios( ){
+    protected ArrayList<Usuario> obtenerUsuarios( ){
         ArrayList<Usuario> res=null;
         
         

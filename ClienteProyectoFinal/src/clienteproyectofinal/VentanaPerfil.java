@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -66,19 +67,20 @@ public class VentanaPerfil extends javax.swing.JFrame {
         txtLocalidad.setText(p.getLocalidad());
         
         if(p.getImagen()!=null){
-            ImageIcon image;
-            ByteArrayInputStream bis = new ByteArrayInputStream(p.getImagen());
-            BufferedImage imagen;
+            //ImageIcon image;
+            //ByteArrayInputStream bis = new ByteArrayInputStream(p.getImagen());
+            //BufferedImage imagen;
             
-                imagen = ImageIO.read(bis);
-                System.out.println(imagen);
-                Icon icono=new ImageIcon(imagen.getScaledInstance(lFoto.getWidth(), lFoto.getHeight(), Image.SCALE_DEFAULT));
-                lFoto.setIcon(icono);
+                //imagen = ImageIO.read(bis);
+                //System.out.println(imagen);
+                //Icon icono=new ImageIcon(imagen.getScaledInstance(lFoto.getWidth(), lFoto.getHeight(), Image.SCALE_DEFAULT));
+                //lFoto.setIcon(icono);
          
             
-            
-            
-            
+        }
+        
+        if(p.getSexo()!=null){
+            cmbSexo.setSelectedItem(p.getSexo());
         }
     }
 
@@ -101,6 +103,8 @@ public class VentanaPerfil extends javax.swing.JFrame {
         lbl = new javax.swing.JLabel();
         txtLocalidad = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
+        lbl1 = new javax.swing.JLabel();
+        cmbSexo = new javax.swing.JComboBox<>();
 
         lFoto.setText("jLabel1");
 
@@ -123,6 +127,10 @@ public class VentanaPerfil extends javax.swing.JFrame {
                 btnGuardarActionPerformed(evt);
             }
         });
+
+        lbl1.setText("Sexo:");
+
+        cmbSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hombre", "Mujer" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -149,9 +157,13 @@ public class VentanaPerfil extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(txtLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(42, 42, 42)
+                                .addComponent(cmbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(276, 276, 276)
+                        .addGap(277, 277, 277)
                         .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(105, Short.MAX_VALUE))
         );
@@ -174,9 +186,13 @@ public class VentanaPerfil extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLocalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -223,15 +239,26 @@ public class VentanaPerfil extends javax.swing.JFrame {
             perf.setName(txtUsuario.getText());
             perf.setLocalidad(txtLocalidad.getText());
             perf.setEdad(Integer.parseInt(txtEdad.getText()));
+            perf.setSexo(cmbSexo.getSelectedItem().toString());
+            
             so = Seguridad.cifrar(clavePubAjena, perf);
+            
             Comunicacion.enviarObjeto(servidor, so);
             
-            System.out.println("aqui estoy perfil enviado"+ perf.getLocalidad());
+            so= (SealedObject) Comunicacion.recibirObjeto(servidor);
+            short orden = (short) Seguridad.descifrar(clavePrivPropia, so);
+            
+            
+            if(orden==100){
+                JOptionPane.showMessageDialog(null, "Datos del Perfil modificados correctamente");
+            }
+            
+            //System.out.println("aqui estoy perfil enviado"+ perf.getLocalidad());
             //so = (SealedObject) Comunicacion.recibirObjeto(servidor);
             //Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
             
             
-            
+            JOptionPane.showMessageDialog(null, "Datos del Perfil modificados correctamente");
             
         } catch (IOException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
@@ -243,6 +270,10 @@ public class VentanaPerfil extends javax.swing.JFrame {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalBlockSizeException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPerfil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPerfil.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -293,11 +324,13 @@ public class VentanaPerfil extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCambiarImagen;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JComboBox<String> cmbSexo;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lFoto;
     private javax.swing.JLabel lbl;
+    private javax.swing.JLabel lbl1;
     private javax.swing.JTextField txtEdad;
     private javax.swing.JTextField txtLocalidad;
     private javax.swing.JTextField txtUsuario;

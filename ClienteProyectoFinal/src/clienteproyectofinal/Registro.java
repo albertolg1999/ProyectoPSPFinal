@@ -193,41 +193,44 @@ public class Registro extends javax.swing.JFrame {
         String name = txtUsuario.getText();
         String email = txtEmail.getText();
         String pwd = new String(pswPassword.getPassword());
+        String Confpwd = new String(pswConfPassword.getPassword());
 
         try {
 
             if (!email.isEmpty() && !name.isEmpty() && !pwd.isEmpty()) {
-                //envio de modo SIGN UP al hilo que escucha en el servidor
-                SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.SIGN_UP);
-                Comunicacion.enviarObjeto(servidor, so);
+                if(pwd.equals(Confpwd)){
+                    //envio de modo SIGN UP al hilo que escucha en el servidor
+                    SealedObject so = Seguridad.cifrar(clavePubAjena, CodigosUso.SIGN_UP);
+                    Comunicacion.enviarObjeto(servidor, so);
                 
-                crearUsuario(name, email);
+                    crearUsuario(name, email);
                 
-                //recibo el codigo de respuesta del servidor
-                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
-                short res = (short) Seguridad.descifrar(clavePrivPropia, so);
+                    //recibo el codigo de respuesta del servidor
+                    so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                    short res = (short) Seguridad.descifrar(clavePrivPropia, so);
 
-                switch (res) {
+                    switch (res) {
+                        
+                        case CodigosUso.CODE_SIGNUP_CORRECTO:
+                            JOptionPane.showMessageDialog(null, "Usuario registrado con exito");
+                            this.dispose();
+                            break;
 
-                    case CodigosUso.CODE_SIGNUP_CORRECTO:
-                        JOptionPane.showMessageDialog(null, "Usuario registrado con exito");
-                        this.dispose();
-                        break;
-
-                    case CodigosUso.CODE_SIGNUP_EMAIL:
-                        //lblError_User.setText("Este email ya existe en la base de datos");
-                        //lblError_User.setVisible(true);
-                        break;
+                        case CodigosUso.CODE_SIGNUP_EMAIL:
+                            JOptionPane.showMessageDialog(null, "Este email ya existe en la BD");
+                            break;
+                    }
+                
+                    
+                            
+                   }
+                else{
+                    JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden");
                 }
+                
 
             } else {
-                if (email.isEmpty()) {
-                    //lblError_User.setVisible(true);
-                } else if (email.isEmpty()) {
-                   // lblError_Name.setVisible(true);
-                } else {
-                    //lblError_Pwd.setVisible(true);
-                }
+                JOptionPane.showMessageDialog(null, "Debe rellenar todos los campos");
             }
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
                 | IllegalBlockSizeException | ClassNotFoundException | BadPaddingException ex) {
