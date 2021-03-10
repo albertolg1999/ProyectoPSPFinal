@@ -344,8 +344,14 @@ public class IniciarSesion extends javax.swing.JFrame {
                     if(code==CodigosUso.C_Preferencias_notiene){
                         System.out.println("no tiene preferencias en la BD");
                         
-                        VentanaPreferencias pf=new VentanaPreferencias(userLog);
+                        VentanaPreferencias pf=new VentanaPreferencias(userLog,servidor, clavePrivPropia, clavePubAjena,"crear");
                         pf.show();
+                        this.hide();
+                    }
+                    else{
+                        VentanaPrincipal vp=new VentanaPrincipal(userLog,false,servidor,clavePrivPropia,clavePubAjena);
+                        vp.show();
+                        
                         this.hide();
                     }
             

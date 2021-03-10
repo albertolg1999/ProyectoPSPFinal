@@ -8,6 +8,7 @@ package clienteproyectofinal;
 import RSMaterialComponent.RSTableMetroCustom;
 import clases.CodigosUso;
 import clases.Comunicacion;
+import clases.Preferencias;
 import clases.Seguridad;
 import clases.Usuario;
 import java.awt.CardLayout;
@@ -35,6 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private Socket servidor;
     private PrivateKey clavePrivPropia;
     private PublicKey clavePubAjena;
+    private Usuario u;
     
     private SealedObject so;
     /**
@@ -45,6 +47,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.servidor = servidor;
         this.clavePrivPropia = priv;
         this.clavePubAjena = pubAjena;
+        initComponents();
+        cargarVentanaRol();
+    }
+
+    VentanaPrincipal(Usuario userLog, boolean admin, Socket servidor, PrivateKey clavePrivPropia, PublicKey clavePubAjena) {
+       this.rolAdmin = admin;
+        this.servidor = servidor;
+        this.clavePrivPropia = clavePrivPropia;
+        this.clavePubAjena = clavePubAjena;
+        this.u=userLog;
         initComponents();
         cargarVentanaRol();
     }
@@ -60,9 +72,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             
 
         }
+        else{
+            btnAdministrar.setVisible(false);
+            btnPerfil.setVisible(true);
+            btnPreferencias.setVisible(true);
+            btnMensajes.setVisible(true);
+        }
     }
-    private VentanaPrincipal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public VentanaPrincipal() {
+        
     }
 
     /**
@@ -82,8 +100,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
         btnAdministrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
 
         imagen.setText("jLabel1");
@@ -96,6 +112,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         btnPreferencias.setText("Mis Preferencias");
+        btnPreferencias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPreferenciasActionPerformed(evt);
+            }
+        });
 
         btnMensajes.setText("Mis Mensajes");
         btnMensajes.addActionListener(new java.awt.event.ActionListener() {
@@ -124,15 +145,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGap(143, 143, 143)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btnMensajes, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnPreferencias, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnAdministrar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(143, 143, 143)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMensajes, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnPreferencias, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAdministrar, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(173, 173, 173)
                         .addComponent(imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -209,6 +229,38 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPerfilActionPerformed
+
+    private void btnPreferenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreferenciasActionPerformed
+        try {
+            
+            enviarRespuesta(CodigosUso.CODE_PREFERENCES_SELECT);
+            
+            so = Seguridad.cifrar(clavePubAjena, u);
+            Comunicacion.enviarObjeto(servidor, so);
+            
+            
+            so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+            Preferencias p = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
+            
+            VentanaPreferencias vpf=new VentanaPreferencias(p);
+            vpf.show();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnPreferenciasActionPerformed
 
     
     private void enviarRespuesta(short res) {

@@ -5,8 +5,23 @@
  */
 package clienteproyectofinal;
 
+import clases.CodigosUso;
+import clases.Comunicacion;
 import clases.Preferencias;
+import clases.Seguridad;
 import clases.Usuario;
+import java.io.IOException;
+import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SealedObject;
 
 /**
  *
@@ -14,6 +29,13 @@ import clases.Usuario;
  */
 public class VentanaPreferencias extends javax.swing.JFrame {
     Usuario u;
+    String modo;
+    private Socket servidor;
+    private PrivateKey clavePrivPropia;
+    private PublicKey clavePubAjena;
+    private Preferencias p;
+    
+    private SealedObject so;
     /**
      * Creates new form VentanaPreferencias
      */
@@ -22,8 +44,19 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         
     }
 
-    VentanaPreferencias(Usuario userLog) {
+    public VentanaPreferencias(Usuario userLog,Socket servidor, PrivateKey priv, PublicKey pubAjena, String modo) {
+        initComponents();
         this.u=userLog;
+        this.servidor = servidor;
+        this.clavePrivPropia = priv;
+        this.clavePubAjena = pubAjena;
+        this.modo=modo;
+    }
+
+    public VentanaPreferencias(Preferencias p) {
+        initComponents();
+        this.p=p;
+        CargarPreferencias(this.p);
     }
 
     /**
@@ -284,6 +317,37 @@ public class VentanaPreferencias extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void CargarPreferencias(Preferencias p){
+        
+        if(p.istHijos()){
+            rbtSi.setSelected(true);
+        }
+        else{
+            rbtNo.setSelected(true);
+        }
+        
+        if(p.isqHijos()){
+            rbqSi.setSelected(true);
+        }
+        else{
+            rbqNo.setSelected(true);
+        }
+        
+        if(p.getRelacion().equals("Esporádica")){
+            rbEsporadica.setSelected(true);
+        }
+        else{
+            rbSerio.setSelected(true);
+        }
+        
+        cmbInteres.setSelectedItem(p.getInteres());
+            
+        jSlider1.setValue(p.getArte());
+        jSlider2.setValue(p.getDeporte());
+        jSlider3.setValue(p.getPolitica());
+        
+       
+    }
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
         
         lArte.setText(""+jSlider1.getValue());
@@ -298,35 +362,82 @@ public class VentanaPreferencias extends javax.swing.JFrame {
     }//GEN-LAST:event_jSlider3StateChanged
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        Preferencias p=new Preferencias();
-        
-        p.setId(this.u.getId());
-        if(rbSerio.isSelected()){
-            p.setRelacion("Seria");
+       
+        try {
+            Preferencias p=new Preferencias();
+            
+            p.setId(this.u.getId());
+            if(rbSerio.isSelected()){
+                p.setRelacion("Seria");
+            }
+            else if(rbEsporadica.isSelected()){
+                p.setRelacion("Esporádica");
+            }
+            
+            if(rbtSi.isSelected()){
+                p.settHijos(true);
+            }
+            else if(rbtNo.isSelected()){
+                p.settHijos(false);
+            }
+            
+            if(rbqSi.isSelected()){
+                p.setqHijos(true);
+            }
+            else if(rbqNo.isSelected()){
+                p.setqHijos(false);
+            }
+            
+            p.setInteres(cmbInteres.getSelectedItem().toString());
+            
+            p.setArte(jSlider1.getValue());
+            p.setDeporte(jSlider2.getValue());
+            p.setPolitica(jSlider3.getValue());
+            
+            if(modo.equals("crear")){
+               enviarRespuesta(CodigosUso.CODE_PREFERENCES_CREATE);
+            
+            
+                so = Seguridad.cifrar(clavePubAjena, p);
+                Comunicacion.enviarObjeto(servidor, so);
+            
+                so = (SealedObject) Comunicacion.recibirObjeto(servidor);
+                short orden2 = (short) Seguridad.descifrar(clavePrivPropia, so);
+                if(orden2==CodigosUso.C_Preferencias_notiene){
+                    System.out.println(orden2);
+                
+                
+                    VentanaPrincipal vp=new VentanaPrincipal(u,false,servidor,clavePrivPropia,clavePubAjena);
+                    vp.show();
+                
+                    this.hide();
+                } 
+            }
+            else{
+                enviarRespuesta(CodigosUso.CODE_PREFERENCES_UPDATE);
+            
+            
+                so = Seguridad.cifrar(clavePubAjena, p);
+                Comunicacion.enviarObjeto(servidor, so);
+            }
+            
+            
+            
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(VentanaPreferencias.class.getName()).log(Level.SEVERE, null, ex);
         }
-        else if(rbEsporadica.isSelected()){
-            p.setRelacion("Esporádica");
-        }
-        
-        if(rbtSi.isSelected()){
-            p.settHijos(true);
-        }
-        else if(rbtNo.isSelected()){
-            p.settHijos(false);
-        }
-        
-        if(rbqSi.isSelected()){
-            p.setqHijos(true);
-        }
-        else if(rbqNo.isSelected()){
-            p.setqHijos(false);
-        }
-        
-        p.setInteres(cmbInteres.getSelectedItem().toString());
-        
-        p.setArte(jSlider1.getValue());
-        p.setDeporte(jSlider2.getValue());
-        p.setPolitica(jSlider3.getValue());
         
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -363,6 +474,18 @@ public class VentanaPreferencias extends javax.swing.JFrame {
                 new VentanaPreferencias().setVisible(true);
             }
         });
+    }
+    
+    /**
+     *
+     * @param res
+     */
+    private void enviarRespuesta(short res) {
+        try {
+            so = Seguridad.cifrar(clavePubAjena, res);
+            Comunicacion.enviarObjeto(servidor, so);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException | IllegalBlockSizeException ex) {
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
