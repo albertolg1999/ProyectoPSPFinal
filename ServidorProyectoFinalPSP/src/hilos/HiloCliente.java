@@ -62,7 +62,7 @@ public class HiloCliente extends Thread {
 
         try {
             //abrirConexion();
-            cb.abrirConexion();
+            //cb.abrirConexion();
             //recibe la clave publica del cliente actual
             clavePubAjena = (PublicKey) Comunicacion.recibirObjeto(cliente);
 
@@ -100,12 +100,20 @@ public class HiloCliente extends Thread {
                         if(p==null){
                             enviarRespuesta(CodigosUso.C_Preferencias_notiene);
                         }
+                        else{
+                            enviarRespuesta(CodigosUso.C_Preferencias_tiene);
+                        }
                         break;
 
                     //crear preferences
                     case CodigosUso.CODE_PREFERENCES_CREATE:
                         System.out.println("ORDEN PREFS");
-                        //crearPreferencias();
+                        
+                        boolean correcto=crearPreferencias();
+                        if(correcto){
+                            enviarRespuesta(CodigosUso.CODE_PREFERENCES_CORRECTO);
+                            System.out.println("respuesta enviada");
+                        }
                         break;
 
                     //actualizar preferences
@@ -115,7 +123,10 @@ public class HiloCliente extends Thread {
                         
                     //seleccionar preferences user
                     case CodigosUso.CODE_PREFERENCES_SELECT:
-                        //cargarPreferencias();
+                        Preferencias pref;
+                        Usuario us=recibirUsuario();
+                        pref=ConexionBD.obtenerPreferencias(us.getId());
+                        cargarPreferencias(pref);
                         break;
                     
                     case CodigosUso.C_obtenerUsuarios:
@@ -383,29 +394,36 @@ public class HiloCliente extends Thread {
     /**
      *
      */
-    /*private void crearPreferencias() {
+    private boolean crearPreferencias() {
+        boolean correcto=false;
         try {
+            
             //recibe las preferencias del usuario
             so = (SealedObject) Comunicacion.recibirObjeto(cliente);
-            Preferences prefs = (Preferences) Seguridad.descifrar(clavePrivPropia, so);
+            Preferencias prefs = (Preferencias) Seguridad.descifrar(clavePrivPropia, so);
 
             //Introducimos las preferencias en la base de datos
-            if (ConexionBD.insertPreferences(prefs)) {
-                enviarRespuesta(CodeResponse.CODE_PREFERENCES_CORRECTO);
+            if (ConexionBD.insertarPreferenciasUsuario(prefs)) {
+                
+                correcto=true;
+                
             }
+            
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IOException
                 | ClassNotFoundException | IllegalBlockSizeException | BadPaddingException ex) {
             ex.printStackTrace();
         }
+        System.out.println(correcto);
+       return correcto;
     }
     
     /**
      *
      */
-    /*private void cargarPreferencias() {
+    private void cargarPreferencias(Preferencias pref) {
         try {
-            so = Seguridad.cifrar(clavePubAjena, prefsUserLog);
+            so = Seguridad.cifrar(clavePubAjena, pref);
             Comunicacion.enviarObjeto(cliente, so);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                 IOException | IllegalBlockSizeException ex) {
@@ -413,7 +431,7 @@ public class HiloCliente extends Thread {
         }
     }
 
-    private void actualizarPreferencias() {
+    /*private void actualizarPreferencias() {
          try {
             //recibe las preferencias del usuario
             so = (SealedObject) Comunicacion.recibirObjeto(cliente);

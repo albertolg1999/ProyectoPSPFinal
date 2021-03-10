@@ -199,12 +199,28 @@ public class ConexionBD {
      *
      * @param prefs
      */
-    /*public synchronized static boolean insertPreferences(Preferences prefs) {
+    public synchronized static boolean insertarPreferenciasUsuario(Preferencias prefs) {
         boolean exito = false;
         try {
-            sentencia = "INSERT INTO " + ConstantesBD.TABLAPREFES + " (idUser, tiporelacion, interes, arte, deporte, politica, thijos, qhijos) "
-                    + "values('" + prefs.getIdUser() + "','" + prefs.getRelacion() + "','" + prefs.getInteres()+ "','" + prefs.getArte() + "','" + prefs.getDeporte()
-                    + "','" + prefs.getPolitica() + "'," + prefs.istHijos() + "," + prefs.isqHijos() + ")";
+            
+            int thijos,qhijos;
+            if(prefs.istHijos()==true){
+                thijos=1;
+            }
+            else{
+                thijos=0;
+            }
+            
+            if(prefs.isqHijos()==true){
+                qhijos=1;
+            }
+            else{
+                qhijos=0;
+            }
+            
+            sentencia = "INSERT INTO " + ConstantesBD.TPref + " (id_usuario, arte, politica, deporte, relaccion, thijos, qhijos, interes) "
+                    + "values(" + prefs.getId() + "," + prefs.getArte() + "," + prefs.getPolitica()+ "," + prefs.getDeporte() + ",'" + prefs.getRelacion()
+                    + "'," + thijos + "," + qhijos + ",'" + prefs.getInteres() + "')";
             if (Sentencia_SQL.executeUpdate(sentencia) == 1) {
                 exito = true;
                 System.out.println("PREFERENCIA REGISTRADA");
@@ -216,7 +232,7 @@ public class ConexionBD {
         return exito;
     }
 
-    public synchronized static boolean updatePreferences(Preferences prefs) {
+    /*public synchronized static boolean updatePreferences(Preferences prefs) {
         boolean exito = false;
 
         try {
